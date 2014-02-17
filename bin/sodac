@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'sodascript'
+require 'optparse'
+
+optparse = OptionParser.new do |opts|
+  opts.on('-h', '--help', 'Display this screen') do
+    puts opts
+    exit
+  end
+
+  opts.on('-d', '--debug', 'Show debugging logs, sets SODA_DEBUG=1') do
+    ENV['SODA_DEBUG'] = '1'
+  end
+end
+
+optparse.parse!
+
+Sodascript.execute(*ARGV)
