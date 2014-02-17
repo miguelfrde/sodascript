@@ -1,0 +1,13 @@
+# OSX
+.DS_Store
+.Splotlight-V100
+.Trashes
+
+# Ruby
+*.gem
+*.rbc
+Gemfile.lock
+
+# Misc
+*.tmp
+*.swp
