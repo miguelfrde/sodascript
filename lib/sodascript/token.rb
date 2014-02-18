@@ -1,6 +1,18 @@
 module Sodascript
+
+  ##
+  # Token is used by Lexer to keep track of all the tokens it finds in the file.
+
   class Token
-    attr_reader :rule, :lexeme
+
+    # Token associated rule (Rule)
+    attr_reader :rule
+
+    # Token's lexeme (String)
+    attr_reader :lexeme
+
+    ##
+    # Creates a token given a _rule_ (Rule) and a _lexeme_ (String).
 
     def initialize(rule, lexeme)
       raise ArgumentError, 'rule must be a Rule' unless
@@ -12,6 +24,9 @@ module Sodascript
       @rule = rule
       @lexeme = lexeme
     end
+
+    ##
+    # String representation of a token
 
     def to_s
       "#{ @rule.name }: #{ @lexeme }"
