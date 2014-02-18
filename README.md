@@ -5,7 +5,9 @@ A simple and beautiful language that compiles to JavaScript.
 
 ![sodascript](https://dl.dropboxusercontent.com/u/17055504/sodascript.png)
 
-Compiler written in Ruby.
+### Ruby coding conventions
+
+This project follows: [Ruby style Guide](https://github.com/bbatsov/ruby-style-guide)
 
 ### Git Workflow
 
