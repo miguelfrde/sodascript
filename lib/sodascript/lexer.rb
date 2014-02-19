@@ -8,6 +8,12 @@ module Sodascript
 
   class Lexer
 
+    # Get all rules
+    attr_reader :rules
+
+    # Get all ignore rules
+    attr_reader :ignore_rules
+
     ##
     # Lexer initialization.
     # If ignore_whitespace is defined then, when Lexer is extracting tokens,
@@ -15,8 +21,8 @@ module Sodascript
 
     def initialize(ignore_whitespace = true)
       @rules = []
-      @ignore = []
-      @ignore << Rule.new(:whitespace, /^\s+$/) if ignore_whitespace
+      @ignore_rules = []
+      @ignore_rules << Rule.new(:whitespace, /^\s+$/) if ignore_whitespace
     end
     
     ##
@@ -30,19 +36,26 @@ module Sodascript
     # Adds a rule to the list of things to ignore.
 
     def ignore(name, regex)
-      @ignore << Rule.new(name, regex)
+      @ignore_rules << Rule.new(name, regex)
     end
 
     ##
     # Performs the lexical analysis over _filename_ using the defined rules.
 
-    def tokenize(file_name)
+    def tokenize_file(file_name)
+      tokenize(File.read(file_name))
+    end
+    
+    ##
+    # Performs the lexical analysis over _string_ using the defined rules.
+
+    def tokenize(string)
       current  = ''
       previous = ''
       tokens = []
       identifies_previous = false
 
-      File.read(file_name).each_char do |c|
+      string.each_char do |c|
         if ignores?(previous)
           previous = ''
           current = ''
@@ -89,7 +102,7 @@ module Sodascript
     # Checks if _string_ matches any of the defined ignore rules.
 
     def ignores?(string)
-      @ignore.each { |ir| return true if ir.matches?(string) }
+      @ignore_rules.each { |ir| return true if ir.matches?(string) }
       false
     end
 

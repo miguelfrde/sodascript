@@ -53,6 +53,6 @@ module Sodascript
     @lexer.add_rule(:identifier, /^[a-zA-Z_][\w-]*$/)
     @lexer.add_rule(:number, /^\d+(\.\d*)?$/)
     @lexer.add_rule(:string, /^("[^"]*"|'[^']*')$/)
-    @lexer.tokenize(@soda_file)
+    @lexer.tokenize_file(@soda_file)
   end
 end
