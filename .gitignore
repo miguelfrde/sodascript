@@ -11,3 +11,7 @@ Gemfile.lock
 # Misc
 *.tmp
 *.swp
+
+# Documentation
+doc/*
+devdoc/*
