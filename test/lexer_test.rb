@@ -39,8 +39,8 @@ describe Sodascript::Lexer do
   describe "#ignore" do
     it "has one more ignore rule defined after calling it" do
       i = @lexer.ignore_rules.size
-      @lexer.add_rule(:test, /^ignore$/)
-      @lexer.rules.size.must_equal(i + 1)
+      @lexer.ignore(:test, /^ignore$/)
+      @lexer.ignore_rules.size.must_equal(i + 1)
     end
   end
 

@@ -15,3 +15,6 @@ Gemfile.lock
 # Documentation
 doc/*
 devdoc/*
+
+# Testing
+coverage/*

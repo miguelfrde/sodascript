@@ -19,11 +19,13 @@ Try to follow this [Ruby style guide](https://github.com/bbatsov/ruby-style-guid
 
     ```$ rake test```
 
-4. If your tests passed push your feature to Github:
+4. Check your test code coverage by opening `coverage/index.html`, try to cover as much as possible.
+
+5. If your tests passed push your feature to Github:
 
     ```$ git push origin <your-feature-name>``` 
 
-5. Go to Github and create a pull request. If you are using `hub` aliased as `git` just run:
+6. Go to Github and create a pull request. If you are using `hub` aliased as `git` just run:
 
     ```$ git pull-request```
 
@@ -48,6 +50,8 @@ We use `minitest` for testing. It's also prefered to write spec tests instead of
 $ rake test
 $ bundle exec rake test
 ```
+
+We use `SimpleCov` for test code coverage. After running your tests, you can open the file `coverage/index.html` to see how much of the code is covered by the current tests. Try to get 100% coverage.
 
 ## Documentation
 

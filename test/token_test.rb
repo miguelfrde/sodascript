@@ -23,4 +23,12 @@ describe Sodascript::Token do
       token.lexeme.must_match(token.rule.regex)
     end
   end
+
+  describe "#to_s" do
+    it "returns the string format of the token" do
+      token = Sodascript::Token.new(@rule, 'test')
+      token.to_s.must_equal('test: test')
+    end
+  end
+
 end
