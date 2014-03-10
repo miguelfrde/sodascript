@@ -81,9 +81,62 @@ module Sodascript
       (@productions[lhs] ||= []) << Production.new(lhs, *args)
       args.each do |sym|
         @terminals[sym.name] = sym if sym.is_a?(Rule)
-        @non_terminals.add(sym) if sym.is_a?(Symbol) && sym != :epsilon
+        @non_terminals << sym if sym.is_a?(Symbol) && sym != :epsilon
       end
-      @non_terminals.add(lhs)
+      @non_terminals << lhs
+    end
+
+    ##
+    # Compute First(X1, X2, ..., Xn) where each X is a non-terminal or a
+    # terminal
+
+    def first_set(*symbols)
+      raise ArgumentError, 'You should provide at least one symbol' unless
+        symbols.size > 0
+      if symbols.size == 1
+        _first_set(symbols[0], Set.new([symbols[0]]))
+      else
+        first_symbols_iterator(symbols, [])
+      end
+    end
+
+    private
+
+    ##
+    # Computes First(symbol), uses explored to keep track of symbols already
+    # visited to avoid falling into an infinite recursion
+
+    def _first_set(symbol, explored)
+      return Set.new([symbol]) if
+        terminals.has_key?(symbol) || symbol == self.class.epsilon
+
+      raise ArgumentError, 'Symbol is not defined' unless
+        non_terminals.include?(symbol)
+
+      result = Set.new
+      productions[symbol].each do |prod|
+        result |= first_symbols_iterator(prod.rhs, explored)
+      end
+      result
+    end
+
+    ##
+    # Computes First(X1, X2, ..., Xn), where each X is a non-terminal or a
+    # terminal uses explored to keep track of symbols already visited to avoid
+    # falling into an infinite recursion
+
+    def first_symbols_iterator(symbol_list, explored)
+      result = Set.new
+      eps = 0
+      symbol_list.each do |sym|
+        # If X is a terminal => First(X) = {X}
+        first = _first_set(sym, explored | [sym])
+        result |= first - [self.class.epsilon]
+        break unless first.include?(self.class.epsilon)
+        eps += 1
+      end
+      result << self.class.epsilon if eps == symbol_list.size
+      result
     end
   end
 end
