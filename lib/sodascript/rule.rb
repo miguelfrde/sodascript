@@ -28,5 +28,11 @@ module Sodascript
     def matches?(string)
       string =~ @regex
     end
+
+    ##
+    # Returns the string representation of a Rule
+    def to_s
+      "#{@name}"
+    end
   end
 end
