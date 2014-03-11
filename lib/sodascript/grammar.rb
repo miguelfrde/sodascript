@@ -151,6 +151,7 @@ module Sodascript
     # visited to avoid falling into an infinite recursion
 
     def _first_set(symbol, explored)
+      # First(terminal) = {terminal}
       return Set.new([symbol]) if
         terminals.has_key?(symbol) || symbol == self.class.epsilon
 
@@ -172,13 +173,15 @@ module Sodascript
     def first_symbols_iterator(symbol_list, explored)
       result = Set.new
       eps = 0
+      # X is a non-terminal (prod.rhs). X -> Y1Y2...Yn
+      # If epsilon in First(Y1...Yi-1), then all a in First(Yi) is in First(X)
       symbol_list.each do |sym|
-        # If X is a terminal => First(X) = {X}
         first = _first_set(sym, explored | [sym])
         result |= first - [self.class.epsilon]
         break unless first.include?(self.class.epsilon)
         eps += 1
       end
+      # If epsilon in First(Y1...Yn) then epsilon in First(X)
       result << self.class.epsilon if eps == symbol_list.size
       result
     end
