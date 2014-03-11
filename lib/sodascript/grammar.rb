@@ -100,6 +100,50 @@ module Sodascript
       end
     end
 
+    ##
+    # Compute Follow(Symbol), where symbol can be either a terminal or a
+    # non-terminal
+
+    def follow_set(symbol)
+      def _follow_set(symbol, explored)
+        raise ArgumentError, 'Symbol is not defined' unless
+          non_terminals.include?(symbol)
+
+        result = Set.new
+        result << self.class.end if symbol == @start_symbol
+
+        @productions.each do |_, prods|
+          prods.each do |prod|
+            prod.rhs.each_with_index do |sym, i|
+              # In this case X = symbol
+              next if sym != symbol
+
+              # If A -> aX, then everything in Follow(A) is in Follow(X)
+              if i == prod.rhs.size - 1
+                result |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
+                  explored.include?(prod.lhs)
+                next
+              end
+
+              # If A -> aXb, then everything in First(b) - {epsilon} is in
+              # Follow(X)
+              first_b = first_set(*prod.rhs[i+1..-1])
+              result |=  first_b - [self.class.epsilon]
+
+              # If A -> aBb and epsilon in First(b), then everything in
+              # Follow(A) is in Follow(X)
+              if first_b.include?(self.class.epsilon)
+                result |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
+                  explored.include?(prod.lhs)
+              end
+            end
+          end
+        end
+        result
+      end
+      _follow_set(symbol, Set.new([symbol]))
+    end
+
     private
 
     ##
