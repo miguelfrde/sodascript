@@ -2,6 +2,7 @@ require 'yaml'
 require 'sodascript/lexer'
 require 'sodascript/token'
 require 'sodascript/rule'
+require 'sodascript/grammar'
 
 ##
 # Main module of gem.
