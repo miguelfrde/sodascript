@@ -68,7 +68,7 @@ module Sodascript
       raise ArgumentError, 'start_symbol must be a symbol' unless
         start_symbol.is_a?(Symbol)
       @productions = {} # Maps a non-terminal A to all B, s.t. A -> B 
-      @non_terminals = Set.new
+      @non_terminals = Set.new([start_symbol])
       @terminals = {} # Maps a terminal name to its rule
       @start_symbol = start_symbol
     end
