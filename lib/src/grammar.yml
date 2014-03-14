@@ -1,0 +1,14 @@
+:tokens:
+  :STRING:    !ruby/regexp   /^("[^"]*"|'[^']*')$/
+  :ID:        !ruby/regexp   /^[a-zA-Z_][\w-]*$/
+  :NUMBER:    !ruby/regexp   /^\d+(\.\d*)?$/
+  :RANGE_SEP: !ruby/regexp   /^\.\.$/
+
+:grammar:
+  :range:
+    -  - :range_item
+       - :RANGE_SEP
+       - :range_item
+  :range_item:
+    -  - :NUMBER
+       - :callable_name
