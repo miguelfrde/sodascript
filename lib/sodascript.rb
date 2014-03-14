@@ -1,3 +1,4 @@
+require 'yaml'
 require 'sodascript/lexer'
 require 'sodascript/token'
 require 'sodascript/rule'
@@ -8,6 +9,8 @@ require 'sodascript/rule'
 
 module Sodascript
 
+  DEFAULT_RULES_FILE = "#{File.dirname(__FILE__)}/src/grammar.yml"
+
   ##
   # Compiles the contents of the soda file and saves them to the js file.
   #
@@ -17,7 +20,17 @@ module Sodascript
     abort 'Wrong arguments, see help' unless args.size == 2
     @soda_file = args[0]
     @js_file = args[1]
+    self.load_grammar
     self.compile
+  end
+
+  ##
+  # Loads the grammar rules and token rules from a file
+
+  def self.load_grammar(file = DEFAULT_RULES_FILE)
+    data = eval YAML.load_file(file).inspect
+    @token_rules = data[:tokens]
+    @grammar_rules = data[:grammar]
   end
 
   private
@@ -44,15 +57,10 @@ module Sodascript
 
   ##
   # Runs lexical analysis
-  # ---
-  # TODO: Instead of hardcoding rules here we should load them from a file
-  # +++
 
   def self.lexical_analysis
     @lexer = Lexer.new
-    @lexer.add_rule(:identifier, /^[a-zA-Z_][\w-]*$/)
-    @lexer.add_rule(:number, /^\d+(\.\d*)?$/)
-    @lexer.add_rule(:string, /^("[^"]*"|'[^']*')$/)
+    @token_rules.each { |name, rule| @lexer.add_rule(name, rule) }
     @lexer.tokenize_file(@soda_file)
   end
 end
