@@ -2,6 +2,23 @@ Sodascript: Contributing Guide
 ==============================
 
 
+## Set up for development
+
+1. Clone the repo
+
+	``` $ git clone -p https://github.com/miguelfrde/sodascript && cd sodascript```
+
+2. Install dependencies (assumes you have [bundler](http://bundler.io/) installed)
+
+	``` $ bundle install ```
+
+3. Make sure everything is working
+
+	``` $ rake test ```
+
+4. Begin hacking!
+
+
 ## Ruby coding style
 
 Try to follow this [Ruby style guide](https://github.com/bbatsov/ruby-style-guide) as much as possible.
