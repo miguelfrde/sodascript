@@ -71,6 +71,7 @@ module Sodascript
       @non_terminals = Set.new([start_symbol])
       @terminals = {} # Maps a terminal name to its rule
       @start_symbol = start_symbol
+      @first = {} # Cache first(X)
     end
 
     ##
@@ -165,6 +166,8 @@ module Sodascript
       return Set.new([symbol]) if
         terminals.has_key?(symbol) || symbol == self.class.epsilon
 
+      return @first[symbol] if @first.has_key?(symbol)
+
       raise ArgumentError, 'Symbol is not defined' unless
         non_terminals.include?(symbol)
 
@@ -172,6 +175,7 @@ module Sodascript
       productions[symbol].each do |prod|
         result |= first_symbols_iterator(prod.rhs, explored)
       end
+      @first[symbol] = result
       result
     end
 
