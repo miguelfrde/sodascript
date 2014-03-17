@@ -79,11 +79,21 @@ describe Sodascript::Lexer do
   end
 
   describe "#tokenize" do
-    it "returns a list of matched tokens which lexemes are all identified" do
+    before do
       @lexer.add_rule(:test2, /^test\d$/)
       @lexer.add_rule(:test3, /^mytest$/)
+    end
+
+    it "returns an enumerator of matched tokens which lexemes are all
+        identified" do
       tokens = @lexer.tokenize('test test2 mytest')
       tokens.all?{ |token| @lexer.identifies?(token.lexeme)}.must_equal(true)
+    end
+
+    it "allows to pass a block to handle each token" do
+      @lexer.tokenize('test test2 mytest') do |token|
+        @lexer.identifies?(token.lexeme).must_equal(true)
+      end
     end
   end
 end
