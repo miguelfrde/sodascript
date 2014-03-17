@@ -3,6 +3,9 @@ require 'sodascript/lexer'
 require 'sodascript/token'
 require 'sodascript/rule'
 require 'sodascript/grammar'
+require 'sodascript/item'
+require 'sodascript/slrtable'
+require 'sodascript/slrparser'
 
 ##
 # Main module of gem.
