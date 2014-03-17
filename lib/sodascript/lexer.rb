@@ -50,9 +50,9 @@ module Sodascript
     # Performs the lexical analysis over _string_ using the defined rules.
 
     def tokenize(string)
+      return to_enum(:tokenize, string) unless block_given?
       current  = ''
       previous = ''
-      tokens = []
       identifies_previous = false
 
       string.each_char do |c|
@@ -70,7 +70,7 @@ module Sodascript
         # If current doesn't match and previous matches, then previous is a token
         # If none of them matched, then continue with next character
         if !identifies_current && identifies_previous
-          tokens << get_token(previous)
+          yield get_token(previous)
           previous = c.clone
           current = c.clone
           identifies_previous = false
@@ -84,10 +84,8 @@ module Sodascript
       unless previous.empty? || ignores?(previous)
         token = get_token(previous)
         raise "Unknown token '#{previous}' in the end" if token.nil?
-        tokens << token
+        yield token
       end
-
-      tokens
     end
 
     ##
