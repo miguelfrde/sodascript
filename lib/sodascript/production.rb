@@ -1,4 +1,5 @@
 require 'sodascript/rule'
+require 'sodascript/grammar'
 
 module Sodascript
 
@@ -22,7 +23,7 @@ module Sodascript
       raise ArgumentError, 'You should at least provide one rhs symbol' unless
         args.size > 0
       raise ArgumentError, 'Left-hand side must be a symbol' unless
-        lhs.is_a?(Symbol) && lhs != :epsilon
+        lhs.is_a?(Symbol) && lhs != Grammar::EPSILON
       args.each do |s|
         raise ArgumentError, 'Right-hand side symbols must be TokenRules or Symbols' unless
           s.is_a?(Rule) || s.is_a?(Symbol)

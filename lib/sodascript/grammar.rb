@@ -9,6 +9,12 @@ module Sodascript
 
   class Grammar
 
+    # Epsilon representation
+    EPSILON = :epsilon
+
+    # $ representation
+    END_SYM = :"$"
+
     # Maps a non-terminal to all its associated productions
     # Ex: {:A => [bA, c]}
     attr_reader :productions
@@ -21,20 +27,6 @@ module Sodascript
 
     # List of all terminals
     attr_reader :terminals
-
-    ##
-    # Get our epsilon symbol representation
-
-    def self.epsilon
-      :epsilon
-    end
-
-    ##
-    # Get our $ symbol representation
-
-    def self.end
-      :"$"
-    end
 
     def initialize(start_symbol)
       raise ArgumentError, 'start_symbol must be a symbol' unless
@@ -54,7 +46,7 @@ module Sodascript
       (@productions[lhs] ||= []) << Production.new(lhs, *args)
       args.each do |sym|
         @terminals[sym.name] = sym if sym.is_a?(Rule)
-        @non_terminals << sym if sym.is_a?(Symbol) && sym != :epsilon
+        @non_terminals << sym if sym.is_a?(Symbol) && sym != EPSILON
       end
       @non_terminals << lhs
     end
@@ -83,7 +75,7 @@ module Sodascript
           non_terminals.include?(symbol)
 
         result = Set.new
-        result << self.class.end if symbol == @start_symbol
+        result << END_SYM if symbol == @start_symbol
 
         @productions.each do |_, prods|
           prods.each do |prod|
@@ -101,11 +93,11 @@ module Sodascript
               # If A -> aXb, then everything in First(b) - {epsilon} is in
               # Follow(X)
               first_b = first_set(*prod.rhs[i+1..-1])
-              result |=  first_b - [self.class.epsilon]
+              result |=  first_b - [EPSILON]
 
               # If A -> aBb and epsilon in First(b), then everything in
               # Follow(A) is in Follow(X)
-              if first_b.include?(self.class.epsilon)
+              if first_b.include?(EPSILON)
                 result |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
                   explored.include?(prod.lhs)
               end
@@ -136,7 +128,7 @@ module Sodascript
     def _first_set(symbol, explored)
       # First(terminal) = {terminal}
       return Set.new([symbol]) if
-        terminals.has_key?(symbol) || symbol == self.class.epsilon
+        terminals.has_key?(symbol) || symbol == EPSILON
 
       return @first[symbol] if @first.has_key?(symbol)
 
@@ -163,12 +155,12 @@ module Sodascript
       # If epsilon in First(Y1...Yi-1), then all a in First(Yi) is in First(X)
       symbol_list.each do |sym|
         first = _first_set(sym, explored | [sym])
-        result |= first - [self.class.epsilon]
-        break unless first.include?(self.class.epsilon)
+        result |= first - [EPSILON]
+        break unless first.include?(EPSILON)
         eps += 1
       end
       # If epsilon in First(Y1...Yn) then epsilon in First(X)
-      result << self.class.epsilon if eps == symbol_list.size
+      result << EPSILON if eps == symbol_list.size
       result
     end
   end

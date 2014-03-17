@@ -9,8 +9,8 @@ describe Sodascript::Grammar do
     @grammar.add_production(:T, Sodascript::Rule.new(:int, /^int$/), :Y)
     @grammar.add_production(:X, Sodascript::Rule.new(:plus, /^\+$/), :E)
     @grammar.add_production(:Y, Sodascript::Rule.new(:times, /^\*$/), :T)
-    @grammar.add_production(:Y, Sodascript::Grammar.epsilon)
-    @grammar.add_production(:X, Sodascript::Grammar.epsilon)
+    @grammar.add_production(:Y, Sodascript::Grammar::EPSILON)
+    @grammar.add_production(:X, Sodascript::Grammar::EPSILON)
   end
 
   describe "when initilialized an initial symbol must be provided" do
@@ -63,8 +63,8 @@ describe Sodascript::Grammar do
     end
 
     it "adds epsilon to neither terminals nor non-terminals" do
-      @grammar1.add_production(:X, Sodascript::Grammar.epsilon)
-      @grammar1.terminals.wont_include(Sodascript::Grammar.epsilon)
+      @grammar1.add_production(:X, Sodascript::Grammar::EPSILON)
+      @grammar1.terminals.wont_include(Sodascript::Grammar::EPSILON)
     end
 
     it "fails if no rhs symbols are provided" do
@@ -104,14 +104,14 @@ describe Sodascript::Grammar do
           contain epsilon, without epsilon" do
         set = @grammar.first_set(:X, :Y, :T)
         res = @grammar.first_set(:X) | @grammar.first_set(:Y) | @grammar.first_set(:T)
-        set.must_equal(res - Set.new([Sodascript::Grammar.epsilon]))
+        set.must_equal(res - Set.new([Sodascript::Grammar::EPSILON]))
       end
 
       it "returns the union of the first of all non-terminals (if their first
           contains epsilon) until a terminal is found including that terminal" do
         set = @grammar.first_set(:X, :Y, :int)
         res = @grammar.first_set(:X) | @grammar.first_set(:Y) | Set.new([:int])
-        set.must_equal(res - Set.new([Sodascript::Grammar.epsilon]))
+        set.must_equal(res - Set.new([Sodascript::Grammar::EPSILON]))
       end
 
       it "returns the union of the first of all non-terminals with epsilon if
@@ -134,7 +134,7 @@ describe Sodascript::Grammar do
   describe "#follow_set" do
     describe "for the defined grammar" do
       it "returns the right Follow sets" do
-        end_sym = Sodascript::Grammar.end
+        end_sym = Sodascript::Grammar::END_SYM
         expected_E = Set.new([:rparen, end_sym])
         expected_X = Set.new([:rparen, end_sym])
         expected_Y = Set.new([:plus, :rparen, end_sym])
@@ -160,7 +160,7 @@ describe Sodascript::Grammar do
       g = Sodascript::Grammar.new(:S)
       g.add_production(:S, :A, :B)
       g.add_production(:A, Sodascript::Rule.new(:a, /^a$/), :A)
-      g.add_production(:B, Sodascript::Grammar.epsilon)
+      g.add_production(:B, Sodascript::Grammar::EPSILON)
       g.add_production(:B, Sodascript::Rule.new(:a, /^a$/), :B)
       g.to_s.must_equal("a -> a\nS -> A B\nA -> a A\nB -> epsilon | a B")
     end
