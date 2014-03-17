@@ -4,6 +4,7 @@ require 'sodascript/token'
 require 'sodascript/rule'
 require 'sodascript/grammar'
 require 'sodascript/item'
+require 'sodascript/slrtable'
 
 ##
 # Main module of gem.
