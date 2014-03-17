@@ -3,6 +3,7 @@ require 'sodascript/lexer'
 require 'sodascript/token'
 require 'sodascript/rule'
 require 'sodascript/grammar'
+require 'sodascript/item'
 
 ##
 # Main module of gem.
