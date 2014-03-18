@@ -1,4 +1,4 @@
-require 'sodascript/item'
+require 'sodascript/slritem'
 require 'sodascript/slrtable'
 require 'sodascript/grammar'
 
@@ -50,7 +50,7 @@ module Sodascript
     # it fills the table with the correspoding shift and reduce actions.
 
     def build_table(grammar)   
-      initial_item = Item.new([grammar.productions[:Sprime][0]], [0])
+      initial_item = SLRItem.new([grammar.productions[:Sprime][0]], [0])
       items = [initial_item.closure(grammar)]
       symbols = grammar.non_terminals | grammar.terminals.keys
 

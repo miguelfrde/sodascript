@@ -8,7 +8,7 @@ module Sodascript
   # a list of the productions that belong to the Item set and the positions of
   # the '.' on each production.
 
-  class Item
+  class SLRItem
 
     # Productions that belong to the Item set.
     attr_reader :productions
@@ -49,7 +49,7 @@ module Sodascript
           result_positions << 0
         end
       end
-      Item.new(result_productions, result_positions)
+      SLRItem.new(result_productions, result_positions)
     end
 
     ##
@@ -66,7 +66,7 @@ module Sodascript
           result_positions << pos + 1
         end
       end
-      Item.new(result_productions, result_positions).closure(grammar)
+      SLRItem.new(result_productions, result_positions).closure(grammar)
     end
 
     ##

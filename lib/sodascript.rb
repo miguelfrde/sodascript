@@ -3,7 +3,7 @@ require 'sodascript/lexer'
 require 'sodascript/token'
 require 'sodascript/rule'
 require 'sodascript/grammar'
-require 'sodascript/item'
+require 'sodascript/slritem'
 require 'sodascript/slrtable'
 require 'sodascript/slrparser'
 
