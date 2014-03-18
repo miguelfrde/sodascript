@@ -60,6 +60,7 @@ module Sodascript
       raise ArgumentError, 'You should provide at least one symbol' unless
         symbols.size > 0
       if symbols.size == 1
+        return @first[symbols[0]] if @first.has_key?(symbols[0])
         _first_set(symbols[0], Set.new([symbols[0]]))
       else
         first_symbols_iterator(symbols, [])
@@ -71,50 +72,9 @@ module Sodascript
     # non-terminal
 
     def follow_set(symbol)
-      def _follow_set(symbol, explored)
-        raise ArgumentError, 'Symbol is not defined' unless
-          non_terminals.include?(symbol)
-
-        return @follow[symbol] if @follow.has_key?(symbol)
-
-        @follow[symbol] = Set.new
-        @follow[symbol] << END_SYM if symbol == @start_symbol
-
-        @productions.each do |_, prods|
-          prods.each do |prod|
-            prod.rhs.each_with_index do |sym, i|
-              # In this case X = symbol
-              next if sym != symbol
-
-              # If A -> aX, then everything in Follow(A) is in Follow(X)
-              if i == prod.rhs.size - 1
-                unless explored.include?(prod.lhs)
-                  follow_lhs = _follow_set(prod.lhs, explored | [prod.lhs])
-                  @follow[symbol] |= follow_lhs
-                  @follow[prod.lhs] = follow_lhs
-                  explored << prod.lhs
-                end
-                next
-              end
-
-              # If A -> aXb, then everything in First(b) - {epsilon} is in
-              # Follow(X)
-              first_b = first_set(*prod.rhs[i+1..-1])
-              @follow[symbol] |=  first_b - [EPSILON]
-
-              # If A -> aBb and epsilon in First(b), then everything in
-              # Follow(A) is in Follow(X)
-              if first_b.include?(EPSILON) && !explored.include?(prod.lhs)
-                follow_lhs = _follow_set(prod.lhs, explored | [prod.lhs])
-                @follow[symbol] |= follow_lhs
-                @follow[prod.lhs] = follow_lhs
-                explored << prod.lhs
-              end
-            end
-          end
-        end
-        @follow[symbol]
-      end
+      raise ArgumentError, 'Symbol is not defined' unless
+        non_terminals.include?(symbol)
+      return @follow[symbol] if @follow.has_key?(symbol)
       _follow_set(symbol, Set.new([symbol]))
     end
 
@@ -171,6 +131,52 @@ module Sodascript
       # If epsilon in First(Y1...Yn) then epsilon in First(X)
       result << EPSILON if eps == symbol_list.size
       result
+    end
+
+    ##
+    # Computes Follow(X), where X is a non-terminal, uses explored to keep track
+    # of symbols already visited to avoid falling into an infinite recursion
+
+    def _follow_set(symbol, explored)
+      return @follow[symbol] if @follow.has_key?(symbol)
+
+      @follow[symbol] = Set.new
+      @follow[symbol] << END_SYM if symbol == @start_symbol
+
+      @productions.each do |_, prods|
+        prods.each do |prod|
+          prod.rhs.each_with_index do |sym, i|
+            # In this case X = symbol
+            next if sym != symbol
+
+            # If A -> aX, then everything in Follow(A) is in Follow(X)
+            if i == prod.rhs.size - 1
+              unless explored.include?(prod.lhs)
+                follow_lhs = _follow_set(prod.lhs, explored | [prod.lhs])
+                @follow[symbol] |= follow_lhs
+                @follow[prod.lhs] = follow_lhs
+                explored << prod.lhs
+              end
+              next
+            end
+
+            # If A -> aXb, then everything in First(b) - {epsilon} is in
+            # Follow(X)
+            first_b = first_set(*prod.rhs[i+1..-1])
+            @follow[symbol] |=  first_b - [EPSILON]
+
+            # If A -> aBb and epsilon in First(b), then everything in
+            # Follow(A) is in Follow(X)
+            if first_b.include?(EPSILON) && !explored.include?(prod.lhs)
+              follow_lhs = _follow_set(prod.lhs, explored | [prod.lhs])
+              @follow[symbol] |= follow_lhs
+              @follow[prod.lhs] = follow_lhs
+              explored << prod.lhs
+            end
+          end
+        end
+      end
+      @follow[symbol]
     end
   end
 end
