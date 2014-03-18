@@ -88,8 +88,12 @@ module Sodascript
 
               # If A -> aX, then everything in Follow(A) is in Follow(X)
               if i == prod.rhs.size - 1
-                @follow[symbol] |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
-                  explored.include?(prod.lhs)
+                unless explored.include?(prod.lhs)
+                  follow_lhs = _follow_set(prod.lhs, explored | [prod.lhs])
+                  @follow[symbol] |= follow_lhs
+                  @follow[prod.lhs] = follow_lhs
+                  explored << prod.lhs
+                end
                 next
               end
 
@@ -100,9 +104,11 @@ module Sodascript
 
               # If A -> aBb and epsilon in First(b), then everything in
               # Follow(A) is in Follow(X)
-              if first_b.include?(EPSILON)
-                @follow[symbol] |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
-                  explored.include?(prod.lhs)
+              if first_b.include?(EPSILON) && !explored.include?(prod.lhs)
+                follow_lhs = _follow_set(prod.lhs, explored | [prod.lhs])
+                @follow[symbol] |= follow_lhs
+                @follow[prod.lhs] = follow_lhs
+                explored << prod.lhs
               end
             end
           end
