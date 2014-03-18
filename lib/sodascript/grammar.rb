@@ -36,6 +36,7 @@ module Sodascript
       @terminals = {} # Maps a terminal name to its rule
       @start_symbol = start_symbol
       @first = {} # Cache first(X)
+      @follow = {} # Cache follow(X)
     end
 
     ##
@@ -74,8 +75,10 @@ module Sodascript
         raise ArgumentError, 'Symbol is not defined' unless
           non_terminals.include?(symbol)
 
-        result = Set.new
-        result << END_SYM if symbol == @start_symbol
+        return @follow[symbol] if @follow.has_key?(symbol)
+
+        @follow[symbol] = Set.new
+        @follow[symbol] << END_SYM if symbol == @start_symbol
 
         @productions.each do |_, prods|
           prods.each do |prod|
@@ -85,7 +88,7 @@ module Sodascript
 
               # If A -> aX, then everything in Follow(A) is in Follow(X)
               if i == prod.rhs.size - 1
-                result |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
+                @follow[symbol] |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
                   explored.include?(prod.lhs)
                 next
               end
@@ -93,18 +96,18 @@ module Sodascript
               # If A -> aXb, then everything in First(b) - {epsilon} is in
               # Follow(X)
               first_b = first_set(*prod.rhs[i+1..-1])
-              result |=  first_b - [EPSILON]
+              @follow[symbol] |=  first_b - [EPSILON]
 
               # If A -> aBb and epsilon in First(b), then everything in
               # Follow(A) is in Follow(X)
               if first_b.include?(EPSILON)
-                result |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
+                @follow[symbol] |= _follow_set(prod.lhs, explored | [prod.lhs]) unless
                   explored.include?(prod.lhs)
               end
             end
           end
         end
-        result
+        @follow[symbol]
       end
       _follow_set(symbol, Set.new([symbol]))
     end
