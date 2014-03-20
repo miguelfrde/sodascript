@@ -23,8 +23,8 @@ module Sodascript
     # will use.
 
     def initialize(terminals, non_terminals)
-      @goto_table = Array.new(1) { Hash.new }
-      @action_table = Array.new(1) { Hash.new }
+      @goto_table = {}
+      @action_table = {}
       @terminals = terminals
       @non_terminals = non_terminals
     end
@@ -34,6 +34,9 @@ module Sodascript
     # symbol
 
     def shift(from_state, symbol, to_state)
+      check_for_conflict(@action_table, from_state, symbol,to_state, SHIFT)
+      check_for_conflict(@goto_table, from_state, symbol, to_state, SHIFT)  
+
       if @non_terminals.include?(symbol)
         (@goto_table[from_state] ||= {})[symbol] = to_state
       elsif @terminals.include?(symbol)
@@ -48,8 +51,10 @@ module Sodascript
     # terminal
 
     def reduce(from_state, symbol, prod_index)
+      check_for_conflict(@action_table, from_state, symbol, prod_index, REDUCE)
       raise ArgumentError, 'symbol must be a terminal' unless
         @terminals.include?(symbol)
+
       (@action_table[from_state] ||= {})[symbol] = [REDUCE, prod_index]
     end
 
@@ -110,6 +115,22 @@ module Sodascript
       a, n = action(state, symbol)
       s = (a == SHIFT && 's') || (a == REDUCE && 'r')
       "#{s}#{n}"
+    end
+
+    ##
+    # Checks if there's a shift/reduce condlict on the given table
+
+    def check_for_conflict(table, from_state, symbol, to_state, action)
+      a_name = action.to_s.downcase
+      if table.has_key?(from_state) &&
+          table[from_state].has_key?(symbol) &&
+          table[from_state][symbol] != [action, to_state]
+        act, _ = table[from_state][symbol]
+        raise ArgumentError, "shift/#{a_name} conflict on #{from_state} with #{symbol}" if
+          act == SHIFT
+        raise ArgumentError, "#{a_name}/reduce conflict on #{from_state} with #{symbol}" if 
+          act == REDUCE
+      end
     end
   end
 end
