@@ -6,7 +6,7 @@ Sodascript: Contributing Guide
 
 1. Clone the repo
 
-	``` $ git clone -p https://github.com/miguelfrde/sodascript && cd sodascript```
+	``` $ git clone https://github.com/miguelfrde/sodascript && cd sodascript```
 
 2. Install dependencies (assumes you have [bundler](http://bundler.io/) installed)
 
@@ -18,6 +18,9 @@ Sodascript: Contributing Guide
 
 4. Begin hacking!
 
+If you want to see debugging output, set the environment variable SODA_DEBUG to 1:
+
+```$ export SODA_DEBUG=1```
 
 ## Ruby coding style
 
