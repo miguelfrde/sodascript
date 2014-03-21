@@ -30,6 +30,7 @@ module Sodascript
       end
       @lhs = lhs
       @rhs = args.map { |s| (s.is_a?(Rule) && s.name) || s }
+      @rhs.select! { |s| s != Grammar::EPSILON }
     end
 
     ##
@@ -44,7 +45,15 @@ module Sodascript
     # String representation of the production
 
     def to_s
-      "#{@lhs} -> #{@rhs.join(' ')}"
+      "#{@lhs} -> #{rhs_str}"
+    end
+
+    ##
+    # String representation of the right-hand side of the production
+
+    def rhs_str
+      rhs = if @rhs.size > 0 then @rhs else [Grammar::EPSILON] end
+      "#{rhs.join(' ')}"
     end
 
   end

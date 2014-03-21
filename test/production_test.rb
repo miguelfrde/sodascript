@@ -51,4 +51,11 @@ describe Sodascript::Production do
       @p6.to_s.must_equal('K -> D')
     end
   end
+
+  describe "when the right-hand side is epsilon" do
+    it "has a right-hand side of size equal to zero" do
+      p = Sodascript::Production.new(:X, Sodascript::Grammar::EPSILON)
+      p.rhs.size.must_equal(0)
+    end
+  end
 end

@@ -83,7 +83,7 @@ module Sodascript
 
     def to_s
       t = @terminals.map{ |term, rule| rule.to_s }.join("\n")
-      prods_str = ->(ps) { ps.map{ |p| p.rhs.join(" ") }.join(" | ") }
+      prods_str = ->(ps) { ps.map{ |p| p.rhs_str }.join(" | ") }
       p = @productions.map{ |n, ps| "#{n} -> " + prods_str.call(ps) }.join("\n")
       "#{t}\n#{p}"
     end
