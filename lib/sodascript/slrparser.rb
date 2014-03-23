@@ -14,12 +14,12 @@ module Sodascript
     # Creates the parser and the table it will use to parse from a given grammar
 
     def initialize(grammar)
-      prod_list = grammar.productions.values.flatten
+      @prod_list = grammar.productions.values.flatten
       grammar.add_production(:Sprime, grammar.start_symbol)
-      prod_list = [grammar.productions[:Sprime][0]] + prod_list
+      @prod_list = [grammar.productions[:Sprime][0]] + @prod_list
 
       @prod_hash = {}
-      prod_list.each_with_index { |prod, index| @prod_hash[prod.to_s] = index }
+      @prod_list.each_with_index { |prod, index| @prod_hash[prod.to_s] = index }
 
       @table = SLRTable.new(
         grammar.terminals.keys | [Grammar::END_SYM],
@@ -29,7 +29,7 @@ module Sodascript
 
       if ENV['SODA_DEBUG']
         puts "Productions:"
-        prod_list.each_with_index { |prod, i| puts "  #{i}   #{prod}" }
+        @prod_list.each_with_index { |prod, i| puts "  #{i}   #{prod}" }
         puts "SLR Table:"
         puts @table
       end
@@ -39,10 +39,62 @@ module Sodascript
     # Run the LR parsing algorithm over a set of tokens
 
     def parse(tokens)
-      # TODO: Run SLR parsing algorithm using the LR parsing algorithm
+      input = tokens.to_a
+      symbols = Array.new
+      stack = [ 0 ]
+      input.push (Sodascript::Token.new(Sodascript::Rule.new(Grammar::END_SYM, /^\$$/), "$"))
+      bc = 0
+      success = false;
+      rows = []
+      rows << ["#{stack.join(" ")}", " ", input[bc..-1].map {|x| x.rule.name}]
+      while true
+        s = stack[-1]
+        a, t = @table.action(s, input[bc].rule.name)
+        if a == SLRTable::SHIFT
+          stack.push(t)
+          bc += 1
+        elsif a == SLRTable::REDUCE
+          production = @prod_list[t]
+          stack.pop(production.cardinality)
+          t = stack[-1]
+          stack.push(@table.goto(t, production.lhs))
+        elsif a == SLRTable::ACCEPT
+          success = true
+          if ENV['SODA_DEBUG']
+            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Accept"]
+          end
+          break
+        else
+          #Call error
+          if ENV['SODA_DEBUG']
+            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Error"]
+          end
+          break
+        end
+
+        if ENV['SODA_DEBUG']
+          if a == SLRTable::SHIFT
+            symbols.push(input[bc-1].rule.name)
+            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Shift"]
+          elsif a == SLRTable::REDUCE
+            symbols.pop(production.cardinality)
+            symbols.push(production.lhs)
+            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Reduce by #{production}"]
+          end
+
+        end
+      end
+
+      if ENV['SODA_DEBUG']
+        table = Terminal::Table.new :headings => ['Stack', 'Symbols', 'Input', 'Action'], :rows => rows
+        puts table
+      end
+
+      success
     end
 
     private
+
 
     ##
     # Builds the SLR table used by parse() to parse a list of tokens.

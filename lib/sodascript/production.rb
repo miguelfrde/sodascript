@@ -34,6 +34,12 @@ module Sodascript
     end
 
     ##
+    # Returns the cardinality of the production
+    def cardinality
+      @rhs.size
+    end
+
+    ##
     # Compares two productions. Returns true if lhs = other.lhs and
     # rhs = other.rhs, false otherwise.
 
