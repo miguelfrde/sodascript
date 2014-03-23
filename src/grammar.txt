@@ -1,0 +1,83 @@
+NUMBER ::= dec_num | hex_num | bin_num | oct_num
+
+ASSIGN_OP ::= += | -= | *= | /= | **= | %= | >>= | <<= | &= | \|= | ^= | =~ | != | =
+
+COMPARE_OP ::= > | < | >= | <= | == | != | ~= | !~
+
+BOOLEAN_OP::= true | false
+
+ATTRIBUTE_ACCESSOR ::= readable | writable | attribute
+
+STATEMENT ::= assign br | print br | control_struct br
+
+NAME ::= name | name . NAME
+
+CALLABLE_NAME ::= NAME | NAME ( ) | NAME ( FUN_ARGS )
+
+FUN_ARGS ::= NAME | NAME , FUN_ARGS
+
+CONTROL_STRUCT ::= IF_STMT | WHILE_STMT | UNLESS_STMT | UNTIL_STMT | FOR_STMT | CASE_STMT
+
+BLOCK ::= STATEMENT br | STATEMENT BLOCK
+
+ASSIGN ::= NAME ASSIGN_OP EXPR | NAME ASSIGN_OP EXPR ASSING_COND
+
+ASSIGN_COND ::= if CONDITION else EXPR
+
+PRINT ::= print | print PRINT_ARGS
+
+PRINT_ARGS ::= CALLABLE_NAME | EXPR | CALLABLE_NAME , PRINT_ARGS | EXPR , PRINT_ARGS
+
+RANGE ::= RANGE_ITEM '::' RANGE_ITEM | RANGE_ITEM '::' RANGE_ITEM , RANGE_ITEM
+
+RANGE_ITEM ::= NUMBER | CALLABLE_NAME
+
+ATOM ::= CALLABLE_NAME | STRING | NUMBER
+
+EXPRESSION ::= EXPR
+
+CLASS ::= class name ATTR_ACCESSORS METHOD_LIST end
+
+FUNCTION ::= function name ( PARAMETERS ) FUNCTION_CONTENT end
+
+FUNCTION_CONTENT ::= BLOCK | BLOCK return EXPR
+
+ATTR_ACCESSORS ::= ATTRIBUTE_ACCESSOR ACCESSOR_CONTENT
+
+ACCESSOR_CONTENT ::= name | name , ACCESSOR_CONTENT
+
+IF_STMT ::= if CONDITION do BLOCK ELSIFS end
+
+ELSIFS ::= elsif CONDITION do BLOCK ELSIFS | ELSE
+
+ELSE ::= else BLOCK
+
+UNLESS_STMT ::= unless CONDITION do BLOCK end | unless CONDITION do BLOCK ELSE end
+
+WHILE_STMT ::= while EXPR do BLOCK end
+
+FOR_STMT ::= for name in RANGE do BLOCK end
+
+UNTIL_STMT ::= until EXPR do BLOCK end
+
+CASE_STMT ::= case CALLABLE_NAME WHENS end
+
+WHENS ::= WHEN_STMT | WHEN_STMT WHENS
+
+WHENS ::= when EXPR do block
+
+ANY_NAME ::= name | string | number | CALLABLE_NAME | LIST_ACCESSOR | HASH_ACCESSOR
+
+LIST ::= [ LIST_ARGS ] | [ ]
+
+LIST_ARGS ::= ANY_NAME | ANY_NAME , LIST_ARGS
+
+HASH ::= { HASH_ARGS } | {  }
+
+HAHS_ARGS ::= ANY_NAME '::' ANY_NAME | ANY_NAME '::' ANY_NAME , LIST_ARGS
+
+LIST_ACCESSOR ::= name [ LIST_ACCESOR_ARG ]
+
+LIST_ACCESOR_ARG ::= NUMBER | CALLABLE_NAME | LIST_ACCESSOR | HASH_ACCESSOR | NAME
+
+HASH_ACCESSOR ::= name { ANY_NAME }
