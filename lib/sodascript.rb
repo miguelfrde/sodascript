@@ -35,7 +35,26 @@ module Sodascript
     data = YAML.load_file(file)
     @token_rules = data[:tokens]
     @ignore_rules = data[:ignore]
-    @grammar_rules = data[:grammar]
+    grammar_rules = data[:grammar]
+    @grammar = Grammar.new(:PROGRAM)
+
+    grammar_rules.each do |lhs, prods|
+      prods.each do |symbols|
+        symbols.each_with_index do |sym, i|
+          if sym == :br
+            symbols[i] = Rule.new(sym, /^\n$/)
+          elsif sym.to_s.downcase == sym.to_s
+            symbols[i] = Rule.new(sym, @token_rules[sym])
+          end
+        end    
+        @grammar.add_production(lhs, *symbols)
+      end
+    end
+
+    if ENV['SODA_DEBUG']
+      puts "Grammar loaded:"
+      puts "    #{@grammar.to_s.split("\n").join("\n    ")}"
+    end
   end
 
   private
@@ -45,13 +64,14 @@ module Sodascript
   # semantic analysis, optimization and code generation.
 
   def self.compile
-    tokens = self.lexical_analysis
+    self.lexical_analysis
     if ENV['SODA_DEBUG']
-      puts 'Lexical analysis completed, tokens found:'
-      tokens.each { |token| puts "    #{token}" }
+      puts "\nLexical analysis completed, tokens found:"
+      @tokens.each { |token| puts "    #{token}" }
     end
 
-    # TODO: Syntactic analysis (parsing)
+    self.syntactic_analysis
+    puts "\nParsing completed" if ENV['SODA_DEBUG']
 
     # TODO: Semantic analysis
 
@@ -67,6 +87,14 @@ module Sodascript
     @lexer = Lexer.new
     @token_rules.each { |name, rule| @lexer.add_rule(name, rule) }
     @ignore_rules.each { |name, rule| @lexer.ignore(name, rule) }
-    @lexer.tokenize_file(@soda_file)
+    @tokens = @lexer.tokenize_file(@soda_file)
+  end
+
+  ##
+  # Runs syntactic analysis
+
+  def self.syntactic_analysis
+    @parser = SLRParser.new(@grammar)
+    @parser.parse(@tokens)
   end
 end
