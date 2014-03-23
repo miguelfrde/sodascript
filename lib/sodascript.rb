@@ -43,7 +43,7 @@ module Sodascript
         symbols.each_with_index do |sym, i|
           if sym == :br
             symbols[i] = Rule.new(sym, /^\n$/)
-          elsif sym.to_s.downcase == sym.to_s
+          elsif sym.to_s.downcase == sym.to_s and sym != Grammar::EPSILON
             symbols[i] = Rule.new(sym, @token_rules[sym])
           end
         end    
