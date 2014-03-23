@@ -9,10 +9,13 @@ def rdoc_actions(rdoc)
 end
 
 # Used by grammar task to translate the token lines to YAML
-def line_to_yml(line, out_file)
-  line = line.split('::=').map { |item| item.strip }
-  space = " " * (12 - line[0].size)
-  out_file.write("  :#{line[0]}:#{space}!ruby/regexp   /^(#{line[1]})$/\n")
+def write_rules(file_name, out_file)
+  out_file.write("\n:#{file_name[4..-5]}:\n")
+  File.open(file_name, 'r').each_line do |line|
+    line = line.split('::=').map { |item| item.strip }
+    space = " " * (12 - line[0].size)
+    out_file.write("  :#{line[0]}:#{space}!ruby/regexp   /^(#{line[1]})$/\n")
+  end
 end
 
 # Run all tests
@@ -38,21 +41,27 @@ desc "Generates the grammar YAML file"
 task :grammar do
   file_path = File.dirname(__FILE__)
   File.open("lib/src/grammar.yml", 'w') do |out_file|
-    out_file.write(":tokens:\n")
-    File.open("src/tokens.txt", 'r').each_line do |s|
-      line_to_yml(s, out_file)
-    end
+    write_rules("src/tokens.txt", out_file)
     puts "Token rules created"
 
-    out_file.write("\n:ignore:\n")
-    File.open("src/ignore.txt", 'r').each_line do |s|
-      line_to_yml(s, out_file)
-    end
+    write_rules("src/ignore.txt", out_file)
     puts "Ignore rules created"
 
-    # TODO: Read and write grammar
+    out_file.write("\n:grammar:\n")
+    File.open("src/grammar.txt", 'r').each_line do |line|
+      name, rhs = line.split('::=').map { |item| item.strip }
+      next unless rhs
+      out_file.write("  :#{name}:\n")
+      rhs.split(" | ").each do |symbols|
+        symbols.strip.split(' ').each_with_index do |symbol, index|
+          out_file.write("    - - ") if index == 0
+          out_file.write("      - ") if index != 0
+          out_file.write(":#{symbol}\n")
+        end
+      end
+    end
+    puts "Grammar rules created"
   end
-
 end
 
 task :default => :test
