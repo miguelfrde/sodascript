@@ -61,6 +61,22 @@ Don't forget to do `$ git pull` before editing anything, so that you are always 
 
 If you are working on a branch that is behind master, do `$ git rebase -i master` to integrate changes from master into the branch you are working. Note: you may need to solve merge conflicts if this happens.
 
+## Modifying the grammar
+
+Make your changes to one or more of the following files:
+
+- `grammar.txt`: If you are modifying the grammar rules.
+- `ignore.txt`: If you are modifying the ignoring rules.
+- `tokens.txt`: If you are modifying the token rules.
+
+Remember that the rule called `PROGRAM` is the one that is used as the starting symbol of the grammar.
+
+Then run:
+
+```$ rake grammar```
+
+And send a pull request.
+
 
 ## Testing
 
