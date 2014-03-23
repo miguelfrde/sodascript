@@ -1,6 +1,10 @@
+PROGRAM ::= ANYTHING | ANYTHING PROGRAM
+
+ANYTHING ::= STATEMENT | CLASS | FUNCTION 
+
 NUMBER ::= dec_num | hex_num | bin_num | oct_num
 
-ASSIGN_OP ::= += | -= | *= | /= | **= | %= | >>= | <<= | &= | \|= | ^= | =~ | != | =
+ASSIGN_OP ::= += | -= | *= | /= | **= | %= | >>= | <<= | &= | |= | ^= | =~ | != | =
 
 COMPARE_OP ::= > | < | >= | <= | == | != | ~= | !~
 
@@ -8,7 +12,7 @@ BOOLEAN_OP::= true | false
 
 ATTRIBUTE_ACCESSOR ::= readable | writable | attribute
 
-STATEMENT ::= assign br | print br | control_struct br
+STATEMENT ::= ASSIGN br | PRINT br | CONTROL_STRUCT br
 
 NAME ::= name | name . NAME
 
@@ -64,9 +68,9 @@ CASE_STMT ::= case CALLABLE_NAME WHENS end
 
 WHENS ::= WHEN_STMT | WHEN_STMT WHENS
 
-WHENS ::= when EXPR do block
+WHEN_STMT ::= when EXPR do BLOCK
 
-ANY_NAME ::= name | string | number | CALLABLE_NAME | LIST_ACCESSOR | HASH_ACCESSOR
+ANY_NAME ::= name | string | NUMBER | CALLABLE_NAME | LIST_ACCESSOR | HASH_ACCESSOR
 
 LIST ::= [ LIST_ARGS ] | [ ]
 

@@ -1,93 +1,102 @@
 
 :tokens:
-  :and:         !ruby/regexp   /^(and|&&)$/
-  :or:          !ruby/regexp   /^(or|\|\|)$/
-  :not:         !ruby/regexp   /^(not|!)$/
-  :if:          !ruby/regexp   /^(if)$/
-  :unless:      !ruby/regexp   /^(unless)$/
-  :else:        !ruby/regexp   /^(else)$/
-  :elsif:       !ruby/regexp   /^(elsif)$/
-  :while:       !ruby/regexp   /^(while)$/
-  :until:       !ruby/regexp   /^(until)$/
-  :for:         !ruby/regexp   /^(for)$/
-  :class:       !ruby/regexp   /^(class)$/
-  :case:        !ruby/regexp   /^(case)$/
-  :when:        !ruby/regexp   /^(when)$/
-  :default:     !ruby/regexp   /^(default)$/
-  :continue:    !ruby/regexp   /^(continue)$/
-  :break:       !ruby/regexp   /^(break)$/
-  :return:      !ruby/regexp   /^(return)$/
-  :function:    !ruby/regexp   /^(function)$/
-  :null:        !ruby/regexp   /^(null)$/
-  :do:          !ruby/regexp   /^(do)$/
-  :end:         !ruby/regexp   /^(end)$/
-  :print:       !ruby/regexp   /^(print)$/
-  :true:        !ruby/regexp   /^(true)$/
-  :false:       !ruby/regexp   /^(false)$/
-  :readable:    !ruby/regexp   /^(readable)$/
-  :writable:    !ruby/regexp   /^(writable)$/
-  :attribute:   !ruby/regexp   /^(attribute)$/
+  :and:         !ruby/regexp   /^and|&&$/
+  :or:          !ruby/regexp   /^or|\|\|$/
+  :not:         !ruby/regexp   /^not|!$/
+  :if:          !ruby/regexp   /^if$/
+  :unless:      !ruby/regexp   /^unless$/
+  :else:        !ruby/regexp   /^else$/
+  :elsif:       !ruby/regexp   /^elsif$/
+  :while:       !ruby/regexp   /^while$/
+  :until:       !ruby/regexp   /^until$/
+  :for:         !ruby/regexp   /^for$/
+  :in:          !ruby/regexp   /^in$/
+  :class:       !ruby/regexp   /^class$/
+  :case:        !ruby/regexp   /^case$/
+  :when:        !ruby/regexp   /^when$/
+  :default:     !ruby/regexp   /^default$/
+  :continue:    !ruby/regexp   /^continue$/
+  :break:       !ruby/regexp   /^break$/
+  :return:      !ruby/regexp   /^return$/
+  :function:    !ruby/regexp   /^function$/
+  :null:        !ruby/regexp   /^null$/
+  :do:          !ruby/regexp   /^do$/
+  :end:         !ruby/regexp   /^end$/
+  :print:       !ruby/regexp   /^print$/
+  :true:        !ruby/regexp   /^true$/
+  :false:       !ruby/regexp   /^false$/
+  :readable:    !ruby/regexp   /^readable$/
+  :writable:    !ruby/regexp   /^writable$/
+  :attribute:   !ruby/regexp   /^attribute$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
-  :dec_num:     !ruby/regexp   /^([+-]?(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?)$/
-  :hex_num:     !ruby/regexp   /^([+-]?0x[0-9a-fA-F]+)$/
-  :bin_num:     !ruby/regexp   /^([+-]?0b[01]+)$/
-  :oct_num:     !ruby/regexp   /^([+-]?0[0-7]+)$/
-  :constant:    !ruby/regexp   /^([A-Z][A-Z\d_]+)$/
+  :dec_num:     !ruby/regexp   /^[+-]?(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
+  :hex_num:     !ruby/regexp   /^[+-]?0x[0-9a-fA-F]+$/
+  :bin_num:     !ruby/regexp   /^[+-]?0b[01]+$/
+  :oct_num:     !ruby/regexp   /^[+-]?0[0-7]+$/
+  :constant:    !ruby/regexp   /^[A-Z][A-Z\d_]+$/
   :name:        !ruby/regexp   /^([a-zA-Z_]*[a-z][\w\-]*)$/
-  :regex:       !ruby/regexp   /^(/([^/\#]|\/|\\\#)*/)$/
-  :',':         !ruby/regexp   /^(\,)$/
-  :'.':         !ruby/regexp   /^(\.)$/
-  :'(':         !ruby/regexp   /^(\()$/
-  :')':         !ruby/regexp   /^(\))$/
-  :'[':         !ruby/regexp   /^(\[)$/
-  :']':         !ruby/regexp   /^(\])$/
-  :'{':         !ruby/regexp   /^(\{)$/
-  :'}':         !ruby/regexp   /^(\})$/
-  :'::':        !ruby/regexp   /^(:)$/
-  :'>':         !ruby/regexp   /^(>)$/
-  :'<':         !ruby/regexp   /^(<)$/
-  :'>=':        !ruby/regexp   /^(>=)$/
-  :'<=':        !ruby/regexp   /^(<=)$/
-  :'==':        !ruby/regexp   /^(==)$/
-  :'!=':        !ruby/regexp   /^(!=)$/
-  :'==':        !ruby/regexp   /^(==)$/
-  :'=':         !ruby/regexp   /^(=)$/
-  :'!=':        !ruby/regexp   /^(!=)$/
-  :'~=':        !ruby/regexp   /^(~=)$/
-  :'!~':        !ruby/regexp   /^(!~)$/
-  :'+=':        !ruby/regexp   /^(\+=)$/
-  :'-=':        !ruby/regexp   /^(-=)$/
-  :'*=':        !ruby/regexp   /^(\*=)$/
-  :'/=':        !ruby/regexp   /^(\/=)$/
-  :'**=':       !ruby/regexp   /^(\*\*=)$/
-  :'%=':        !ruby/regexp   /^(%=)$/
-  :'>>=':       !ruby/regexp   /^(>>=)$/
-  :'<<=':       !ruby/regexp   /^(<<=)$/
-  :'&=':        !ruby/regexp   /^(&=)$/
-  :'|=':        !ruby/regexp   /^(\|=)$/
-  :'^=':        !ruby/regexp   /^(^=)$/
-  :'=~':        !ruby/regexp   /^(=~)$/
-  :'!=':        !ruby/regexp   /^(!=)$/
-  :'=':         !ruby/regexp   /^(=)$/
-  :'+':         !ruby/regexp   /^(\+)$/
-  :'-':         !ruby/regexp   /^(-)$/
-  :'*':         !ruby/regexp   /^(\*)$/
-  :'**':        !ruby/regexp   /^(\*\*)$/
-  :'/':         !ruby/regexp   /^(/)$/
-  :'%':         !ruby/regexp   /^(%)$/
-  :'<<':        !ruby/regexp   /^(<<)$/
-  :'>>':        !ruby/regexp   /^(>>)$/
-  :'&':         !ruby/regexp   /^(&)$/
-  :'|':         !ruby/regexp   /^(\|)$/
-  :'~':         !ruby/regexp   /^(~)$/
-  :'^':         !ruby/regexp   /^(\^)$/
-  :'++':        !ruby/regexp   /^(\+\+)$/
-  :'--':        !ruby/regexp   /^(--)$/
+  :regex:       !ruby/regexp   /^/([^/\#]|\/|\\\#)*/$/
+  :',':         !ruby/regexp   /^\,$/
+  :'.':         !ruby/regexp   /^\.$/
+  :'(':         !ruby/regexp   /^\($/
+  :')':         !ruby/regexp   /^\)$/
+  :'[':         !ruby/regexp   /^\[$/
+  :']':         !ruby/regexp   /^\]$/
+  :'{':         !ruby/regexp   /^\{$/
+  :'}':         !ruby/regexp   /^\}$/
+  :'::':        !ruby/regexp   /^:$/
+  :'>':         !ruby/regexp   /^>$/
+  :'<':         !ruby/regexp   /^<$/
+  :'>=':        !ruby/regexp   /^>=$/
+  :'<=':        !ruby/regexp   /^<=$/
+  :'==':        !ruby/regexp   /^==$/
+  :'!=':        !ruby/regexp   /^!=$/
+  :'==':        !ruby/regexp   /^==$/
+  :'=':         !ruby/regexp   /^=$/
+  :'!=':        !ruby/regexp   /^!=$/
+  :'~=':        !ruby/regexp   /^~=$/
+  :'!~':        !ruby/regexp   /^!~$/
+  :'+=':        !ruby/regexp   /^\+=$/
+  :'-=':        !ruby/regexp   /^-=$/
+  :'*=':        !ruby/regexp   /^\*=$/
+  :'/=':        !ruby/regexp   /^\/=$/
+  :'**=':       !ruby/regexp   /^\*\*=$/
+  :'%=':        !ruby/regexp   /^%=$/
+  :'>>=':       !ruby/regexp   /^>>=$/
+  :'<<=':       !ruby/regexp   /^<<=$/
+  :'&=':        !ruby/regexp   /^&=$/
+  :'|=':        !ruby/regexp   /^\|=$/
+  :'^=':        !ruby/regexp   /^^=$/
+  :'=~':        !ruby/regexp   /^=~$/
+  :'!=':        !ruby/regexp   /^!=$/
+  :'=':         !ruby/regexp   /^=$/
+  :'+':         !ruby/regexp   /^\+$/
+  :'-':         !ruby/regexp   /^-$/
+  :'*':         !ruby/regexp   /^\*$/
+  :'**':        !ruby/regexp   /^\*\*$/
+  :'/':         !ruby/regexp   /^/$/
+  :'%':         !ruby/regexp   /^%$/
+  :'<<':        !ruby/regexp   /^<<$/
+  :'>>':        !ruby/regexp   /^>>$/
+  :'&':         !ruby/regexp   /^&$/
+  :'|':         !ruby/regexp   /^\|$/
+  :'~':         !ruby/regexp   /^~$/
+  :'^':         !ruby/regexp   /^\^$/
+  :'++':        !ruby/regexp   /^\+\+$/
+  :'--':        !ruby/regexp   /^--$/
 
 :ignore:
-  :comment:     !ruby/regexp   /^(\#.+\$)$/
+  :comment:     !ruby/regexp   /^\#.+\$$/
 
 :grammar:
+  :PROGRAM:
+    - - :ANYTHING
+    - - :ANYTHING
+      - :PROGRAM
+  :ANYTHING:
+    - - :STATEMENT
+    - - :CLASS
+    - - :FUNCTION
   :NUMBER:
     - - :dec_num
     - - :hex_num
@@ -103,7 +112,7 @@
     - - :>>=
     - - :<<=
     - - :&=
-    - - :\|=
+    - - :|=
     - - :^=
     - - :=~
     - - :!=
@@ -125,11 +134,11 @@
     - - :writable
     - - :attribute
   :STATEMENT:
-    - - :assign
+    - - :ASSIGN
       - :br
-    - - :print
+    - - :PRINT
       - :br
-    - - :control_struct
+    - - :CONTROL_STRUCT
       - :br
   :NAME:
     - - :name
@@ -291,15 +300,15 @@
     - - :WHEN_STMT
     - - :WHEN_STMT
       - :WHENS
-  :WHENS:
+  :WHEN_STMT:
     - - :when
       - :EXPR
       - :do
-      - :block
+      - :BLOCK
   :ANY_NAME:
     - - :name
     - - :string
-    - - :number
+    - - :NUMBER
     - - :CALLABLE_NAME
     - - :LIST_ACCESSOR
     - - :HASH_ACCESSOR

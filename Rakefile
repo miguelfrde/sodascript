@@ -15,7 +15,7 @@ def write_rules(file_name, out_file)
   File.open(file_name, 'r').each_line do |line|
     line = line.split('::=').map { |item| item.strip }
     space = " " * (12 - line[0].size)
-    out_file.write("  :#{line[0]}:#{space}!ruby/regexp   /^(#{line[1]})$/\n")
+    out_file.write("  :#{line[0]}:#{space}!ruby/regexp   /^#{line[1]}$/\n")
   end
 end
 
