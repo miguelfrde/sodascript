@@ -29,7 +29,7 @@ module Sodascript
     # String representation of a token
 
     def to_s
-      "#{ @rule.name }: #{ @lexeme }"
+      "#{ @rule.name }: #{ @lexeme.inspect[1..-2] }"
     end
   end
 end
