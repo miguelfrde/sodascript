@@ -56,14 +56,14 @@ module Sodascript
       identifies_previous = false
 
       string.each_char do |c|
-        if ignores?(previous)
+        if previous == '$' || ignores?(previous)
           previous = ''
           current = ''
         end
-
-        # NOTE: This fix is needed since "\n" =~ /$^/ is true
-        c = (c == "\n" && ' ') || c
         
+        # NOTE: This fix is needed since "\n" =~ /$^/ is true
+        c = (c == "\n" && '$') || c
+
         current << c
         identifies_current = identifies?(current)
 
@@ -73,7 +73,8 @@ module Sodascript
           yield get_token(previous)
           previous = c.clone
           current = c.clone
-          identifies_previous = false
+          yield Token.new(Rule.new(:br, /^\n$/), "\n") if c == '$'
+          identifies_previous = identifies?(previous)
         else
           previous << c
           identifies_previous = identifies_current
@@ -81,7 +82,7 @@ module Sodascript
 
       end
 
-      unless previous.empty? || ignores?(previous)
+      unless previous.empty? || ignores?(previous) || previous == '$'
         token = get_token(previous)
         raise "Unknown token '#{previous}' in the end" if token.nil?
         yield token
