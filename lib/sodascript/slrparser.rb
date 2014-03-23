@@ -115,6 +115,8 @@ module Sodascript
         end
       end
 
+      add_reduces(items[0], 0, grammar)
+      
       if ENV['SODA_DEBUG']
         puts "Items:"
         items.each_with_index do |item, i|
