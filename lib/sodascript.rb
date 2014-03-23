@@ -29,8 +29,9 @@ module Sodascript
   # Loads the grammar rules and token rules from a file
 
   def self.load_grammar(file = DEFAULT_RULES_FILE)
-    data = eval YAML.load_file(file).inspect
+    data = YAML.load_file(file)
     @token_rules = data[:tokens]
+    @ignore_rules = data[:ignore]
     @grammar_rules = data[:grammar]
   end
 
@@ -62,6 +63,7 @@ module Sodascript
   def self.lexical_analysis
     @lexer = Lexer.new
     @token_rules.each { |name, rule| @lexer.add_rule(name, rule) }
+    @ignore_rules.each { |name, rule| @lexer.ignore(name, rule) }
     @lexer.tokenize_file(@soda_file)
   end
 end
