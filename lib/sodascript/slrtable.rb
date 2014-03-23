@@ -121,15 +121,15 @@ module Sodascript
     # Checks if there's a shift/reduce condlict on the given table
 
     def check_for_conflict(table, from_state, symbol, to_state, action)
-      a_name = action.to_s.downcase
-      if table.has_key?(from_state) &&
-          table[from_state].has_key?(symbol) &&
-          table[from_state][symbol] != [action, to_state]
-        act, _ = table[from_state][symbol]
-        raise ArgumentError, "shift/#{a_name} conflict on #{from_state} with #{symbol}" if
-          act == SHIFT
-        raise ArgumentError, "#{a_name}/reduce conflict on #{from_state} with #{symbol}" if 
-          act == REDUCE
+      begin
+        if table[from_state][symbol] != [action, to_state]
+          act, _ = table[from_state][symbol]
+          raise ArgumentError, "shift/#{action} conflict on #{from_state} with #{symbol}" if
+            act == SHIFT
+          raise ArgumentError, "#{action}/reduce conflict on #{from_state} with #{symbol}" if 
+            act == REDUCE
+        end
+      rescue NoMethodError
       end
     end
   end
