@@ -1,5 +1,6 @@
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'rake/clean'
 require 'rdoc/task'
 
 # Used by rdoc tasks to add the README to the documentation.
@@ -63,5 +64,7 @@ task :grammar do
     puts "Grammar rules created"
   end
 end
+
+CLEAN.include('lib/src/grammar.yml')
 
 task :default => :test
