@@ -88,7 +88,6 @@ module Sodascript
 
     def to_s
       table = Terminal::Table.new do |t|
-        symbols = @terminals.size + @non_terminals.size
         t << ['State'] + @terminals.to_a + @non_terminals.to_a
 
         max_state = [@goto_table.size, @action_table.size].max - 1
