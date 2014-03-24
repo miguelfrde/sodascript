@@ -6,6 +6,7 @@ require 'sodascript/grammar'
 require 'sodascript/slritem'
 require 'sodascript/slrtable'
 require 'sodascript/slrparser'
+require 'sodascript/llparser'
 
 ##
 # Main module of gem.
@@ -94,7 +95,7 @@ module Sodascript
   # Runs syntactic analysis
 
   def self.syntactic_analysis
-    @parser = SLRParser.new(@grammar)
+    @parser = ENV['LLPARSE'] && LLParser.new(@grammar) || SLRParser.new(@grammar)
     @parser.parse(@tokens)
   end
 end
