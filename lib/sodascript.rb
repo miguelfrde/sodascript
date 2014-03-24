@@ -14,6 +14,7 @@ require 'sodascript/llparser'
 
 module Sodascript
 
+  # YAML file where the token rules and grammar rules are defined.
   DEFAULT_RULES_FILE = "#{File.dirname(__FILE__)}/src/grammar.yml"
 
   ##

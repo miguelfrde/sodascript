@@ -3,17 +3,25 @@ require 'terminal-table'
 
 module Sodascript
 
+  ##
+  # Top-down parsing implementation, LL(1) algorithm
+
   class LLParser
 
-    attr_reader :grammar
-
+    # Stores the LL(1) parsing table as a hash of hashes
     attr_reader :table
+
+    ##
+    # Initialize a new LL(1) parser from a given grammar
 
     def initialize(grammar)
       @grammar = grammar
       do_table
       puts "\nLL1 Table:\n" + table_to_s if ENV['SODA_DEBUG']
     end
+
+    ##
+    # String representation of the parsing table
 
     def table_to_s
       table = Terminal::Table.new do |t|
@@ -31,29 +39,10 @@ module Sodascript
       table.to_s
     end
 
-    def do_table
-      @table = Hash.new { |h,k| h[k] = Hash.new }
 
-      @grammar.productions.each do |lhs, prods|
-        prods.each do |prod|
-          if prod.rhs.size > 0
-            i = 0
-            sub_first = @grammar.first_set(prod.rhs[0])
-            while sub_first.include?(Grammar::EPSILON)
-              sub_first -= [Grammar::EPSILON]
-              i += 1
-              sub_first += @grammar.first_set(prod.rhs[i])
-            end
-
-            sub_first.each { |sym| table[lhs][sym] = prod }
-
-          else
-            @grammar.follow_set(lhs).each { |sym| table[lhs][sym] = prod }
-          end
-        end
-      end
-    end
-
+    ##
+    # Perform LL(1) top-down parsing algorithm on a set of tokens
+    
     def parse(tokens)
       input = []
       tokens.map { |e| input << e.rule.name }
@@ -82,6 +71,34 @@ module Sodascript
         t << [input.join(' '),  stack.join(' '), '']
       end
       puts "Parse Table:\n" + table.to_s if ENV['SODA_DEBUG']
+    end
+    
+    private
+
+    ## 
+    # Create a new LL(1) parsing table from the given grammar
+
+    def do_table
+      @table = Hash.new { |h,k| h[k] = Hash.new }
+
+      @grammar.productions.each do |lhs, prods|
+        prods.each do |prod|
+          if prod.rhs.size > 0
+            i = 0
+            sub_first = @grammar.first_set(prod.rhs[0])
+            while sub_first.include?(Grammar::EPSILON)
+              sub_first -= [Grammar::EPSILON]
+              i += 1
+              sub_first += @grammar.first_set(prod.rhs[i])
+            end
+
+            sub_first.each { |sym| table[lhs][sym] = prod }
+
+          else
+            @grammar.follow_set(lhs).each { |sym| table[lhs][sym] = prod }
+          end
+        end
+      end
     end
 
   end

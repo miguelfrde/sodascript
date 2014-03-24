@@ -28,6 +28,9 @@ module Sodascript
     # List of all terminals
     attr_reader :terminals
 
+    ##
+    # Create a new Grammar object with a specified start symbol.
+    
     def initialize(start_symbol)
       raise ArgumentError, 'start_symbol must be a symbol' unless
         start_symbol.is_a?(Symbol)
