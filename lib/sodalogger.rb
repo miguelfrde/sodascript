@@ -29,6 +29,15 @@ module SodaLogger
   # White color constant
   WHITE = :white_color
 
+  COLORS = { DEFAULT => '39'
+             RED => '31',
+             GREEN => '32',
+             YELLOW => '33',
+             BLUE => '34',
+             MAGENTA => '35',
+             CYAN => '36',
+             WHITE => '37' }
+
   # Call this method to print a yellow warning
   def self.warning(msg)
     self.message("WARNING: #{msg}", YELLOW)
@@ -65,24 +74,8 @@ module SodaLogger
   def self.message(msg, color = DEFAULT, output = $stdout)
     raise ArgumentError, 'output must be $stdout or $stderr' unless
       output == $stdout || output == $stderr
-
-    case color
-    when DEFAULT
-      output.puts msg
-    when RED
-      output.puts "\e[0;31m#{msg}\e[0m"
-    when GREEN
-      output.puts "\e[0;32m#{msg}\e[0m"
-    when YELLOW
-      output.puts "\e[0;33m#{msg}\e[0m"
-    when BLUE
-      output.puts "\e[0;34m#{msg}\e[0m"
-    when MAGENTA
-      output.puts "\e[0;35m#{msg}\e[0m"
-    when CYAN
-      output.puts "\e[0;36m#{msg}\e[0m"
-    when WHITE
-      output.puts "\e[0;37m#{msg}\e[0m"
+    if COLORS.has_key?(color)
+      output.puts "\e[0;" + COLORS[color] + "m#{msg}\e[0m"
     else
       output.puts msg
     end
