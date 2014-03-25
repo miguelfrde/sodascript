@@ -80,7 +80,14 @@ module Sodascript
     # True if all elements are equal, false otherwise
 
     def ==(other)
-      @productions == other.productions && @positions == other.positions
+      equal_productions = Set.new(@productions) == Set.new(other.productions)
+      return false unless equal_productions
+      hash_list = lambda do |item|
+        item.productions.each_with_index.map{ |p, i| [p, item.positions[i]] }
+      end
+      hash1 = Hash[hash_list.call(self)]
+      hash2 = Hash[hash_list.call(other)]
+      hash1.all? { |prod, pos| pos == hash2[prod] }
     end
 
     ##
