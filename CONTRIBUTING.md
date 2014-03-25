@@ -57,7 +57,7 @@ If you need to fix a commit that you have already pushed to the pull-request, yo
 
 ```$ git push -f origin <your-feature-name>```
 
-Don't forget to do `$ git pull` before editing anything, so that you are always working on the latest version.
+Don't forget to do `$ git pull --rebase` before editing anything, so that you are always working on the latest version.
 
 If you are working on a branch that is behind master, do `$ git rebase -i master` to integrate changes from master into the branch you are working. Note: you may need to solve merge conflicts if this happens.
 
