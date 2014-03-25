@@ -5,8 +5,6 @@
 
 module SodaLogger
 
-  # Default color constant
-  DEFAULT = 39
 
   # Red color constant
   RED = 31
@@ -14,8 +12,8 @@ module SodaLogger
   # Green color constant
   GREEN = 32
 
-  # Yellow color constant
-  YELLOW = 33
+  # Brown color constant
+  BROWN = 33
 
   # Blue color constant
   BLUE = 34
@@ -26,8 +24,35 @@ module SodaLogger
   # Cyan color constant
   CYAN = 36
 
+  # Gray color constant
+  GRAY = 37
+
+  # Default color constant
+  DEFAULT = 39
+
+  # Dark gray color constant
+  DARK_GRAY = 40
+
+  # Light red color constant
+  LIGHT_RED = 41
+
+  # Light green color constant
+  LIGHT_GREEN = 42
+
+  # Yellow color constant
+  YELLOW = 43
+
+  # Light blue color constant
+  LIGHT_BLUE = 44
+
+  # Light purple color constant
+  LIGHT_PURPLE = 45
+
+  # Light cyan color constant
+  LIGHT_CYAN = 46
+
   # White color constant
-  WHITE = 37
+  WHITE = 47
 
   # Call this method to print a yellow warning
   def self.warning(msg)
@@ -65,8 +90,10 @@ module SodaLogger
   def self.message(msg, color = DEFAULT, output = $stdout)
     raise ArgumentError, 'output must be $stdout or $stderr' unless
       output == $stdout || output == $stderr
-    if 31 <= color && color <= 39 && color != 38
+    if 31 <= color && color <= 37
       output.puts "\e[0;#{color}m#{msg}\e[0m"
+    elsif 41 <= color && color <= 47
+      output.puts "\e[1;#{color - 10}m#{msg}\e[0m"
     else
       output.puts msg
     end
