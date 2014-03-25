@@ -1,4 +1,5 @@
 require 'yaml'
+require 'sodalogger'
 require 'sodascript/lexer'
 require 'sodascript/token'
 require 'sodascript/rule'
@@ -46,7 +47,7 @@ module Sodascript
           elsif sym.to_s.downcase == sym.to_s and sym != Grammar::EPSILON
             symbols[i] = Rule.new(sym, @token_rules[sym])
           end
-        end    
+        end
         @grammar.add_production(lhs, *symbols)
       end
     end
