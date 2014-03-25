@@ -44,7 +44,7 @@ describe Sodascript::Production do
       (@p1 == @p6).must_equal(false)
     end
   end
-  
+
   describe "#to_s" do
     it "returns the string representation of a production" do
       @p1.to_s.must_equal('S -> A B')
@@ -56,6 +56,17 @@ describe Sodascript::Production do
     it "has a right-hand side of size equal to zero" do
       p = Sodascript::Production.new(:X, Sodascript::Grammar::EPSILON)
       p.rhs.size.must_equal(0)
+    end
+  end
+
+  describe "#cardinality" do
+    it "returns the size of the right-hand size" do
+      @p1.cardinality.must_equal(@p1.rhs.size)
+      @p2.cardinality.must_equal(@p2.rhs.size)
+      @p3.cardinality.must_equal(@p3.rhs.size)
+      @p4.cardinality.must_equal(@p4.rhs.size)
+      @p5.cardinality.must_equal(@p5.rhs.size)
+      @p6.cardinality.must_equal(@p6.rhs.size)
     end
   end
 end
