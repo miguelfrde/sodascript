@@ -22,8 +22,8 @@ module Sodascript
       @prod_list.each_with_index { |prod, index| @prod_hash[prod.to_s] = index }
 
       @table = SLRTable.new(
-        grammar.terminals.keys | [Grammar::END_SYM],
-        grammar.non_terminals - [:Sprime]
+          grammar.terminals.keys | [Grammar::END_SYM],
+          grammar.non_terminals - [:Sprime]
       )
       build_table(grammar)
 
@@ -123,6 +123,8 @@ module Sodascript
           break
         end
         @stack.pop
+        @symbols.pop
+        @bc += 1
       end
     end
 
@@ -133,7 +135,7 @@ module Sodascript
     # While computing the list of items that are used to generate the SLR table,
     # it fills the table with the correspoding shift and reduce actions.
 
-    def build_table(grammar)   
+    def build_table(grammar)
       initial_item = SLRItem.new([grammar.productions[:Sprime][0]], [0])
       items = [initial_item.closure(grammar)]
       symbols = grammar.non_terminals | grammar.terminals.keys
@@ -148,7 +150,7 @@ module Sodascript
       end
 
       add_reduces(items[0], 0, grammar)
-      
+
       if ENV['SODA_DEBUG']
         puts "Items:"
         items.each_with_index do |item, i|
@@ -179,7 +181,7 @@ module Sodascript
       item.each_production do |production, pos|
         next unless production.rhs.size == pos
         if production.lhs == :Sprime
-          @table.accept(item_index, Grammar::END_SYM) 
+          @table.accept(item_index, Grammar::END_SYM)
         else
           grammar.follow_set(production.lhs).each do |symbol|
             @table.reduce(item_index, symbol, @prod_hash[production.to_s])
