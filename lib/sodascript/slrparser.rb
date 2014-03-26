@@ -47,12 +47,14 @@ module Sodascript
       success = true
       rows = []
       rows << ["#{@stack.join(" ")}", " ", @input[@bc..-1].map {|x| x.rule.name}]
+      @line = 1
       while @bc < @input.size
         s = @stack[-1]
         a, t = @table.action(s, @input[@bc].rule.name)
         if a == SLRTable::SHIFT
           @stack.push(t)
           @bc += 1
+          @line += 1 if @bc < @input.size && @input[@bc].rule.name == :br
         elsif a == SLRTable::REDUCE
           production = @prod_list[t]
           @stack.pop(production.cardinality)
@@ -64,9 +66,9 @@ module Sodascript
           end
           break
         else
-          #Call error
+          # Call error
           success = false
-          SodaLogger.error("unexpected token #{@input[@bc]}")
+          SodaLogger.error("unexpected token #{@input[@bc]} in line #{@line}")
           if ENV['SODA_DEBUG']
             rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Error unexpected #{@input[@bc]}"]
           end
@@ -93,9 +95,9 @@ module Sodascript
       end
 
       if success
-        SodaLogger.success("parsing completed correctly")
+        SodaLogger.success("Parsing completed successfuly")
       else
-        SodaLogger.fail("errors were found while parsing")
+        SodaLogger.fail("errors were found while parsing", !ENV['SODA_DEBUG'].nil?)
       end
 
       success
@@ -117,7 +119,8 @@ module Sodascript
               @symbols.push(non_terminal)
               break
             else
-              @bc += 1 #Discard all symbols from the input till s’
+              @bc += 1 #Discard all symbols from the input till s'
+              @line += 1 if @bc < @input.size && @input[@bc].rule.name == :br
             end
           end
           break
@@ -125,6 +128,7 @@ module Sodascript
         @stack.pop
         @symbols.pop
         @bc += 1
+        @line += 1 if @bc < @input.size && @input[@bc].rule.name == :br
       end
     end
 
