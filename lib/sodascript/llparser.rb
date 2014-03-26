@@ -42,7 +42,7 @@ module Sodascript
 
     ##
     # Perform LL(1) top-down parsing algorithm on a set of tokens
-    
+
     def parse(tokens)
       input = []
       tokens.map { |e| input << e.rule.name }
@@ -56,10 +56,10 @@ module Sodascript
           if stack[-1] == input[0]
             row << stack.pop.to_s
             input.shift
-          elsif @grammar.terminals.include?stack[-1]
-            raise 'Esta mal'
+          elsif @grammar.terminals.include?(stack[-1])
+            SodaLogger.fail("Parsing error, tried to pop the terminal #{stack[-1]}")
           elsif @table[stack[-1]][input[0]].nil?
-            raise 'Esta mal 2'
+            SodaLogger.fail("Parsing error, unexpected token #{input[0]}")
           else
             aux = stack.pop
             @table[aux][input[0]].rhs.reverse_each { |sym| stack << sym }
@@ -72,10 +72,10 @@ module Sodascript
       end
       puts "Parse Table:\n" + table.to_s if ENV['SODA_DEBUG']
     end
-    
+
     private
 
-    ## 
+    ##
     # Create a new LL(1) parsing table from the given grammar
 
     def do_table
