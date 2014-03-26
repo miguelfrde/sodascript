@@ -102,8 +102,10 @@ module Sodascript
         yield token
       end
 
-      backtrace = ENV.has_key?('SODA_DEBUG')
-      SodaLogger::fail("Errors found while performing lexical analysis", backtrace)
+      if errors_found
+        SodaLogger::fail("Errors found while performing lexical analysis",
+          ENV.has_key?('SODA_DEBUG'))
+      end
     end
 
     ##
