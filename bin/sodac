@@ -12,6 +12,10 @@ optparse = OptionParser.new do |opts|
   opts.on('-d', '--debug', 'Show debugging logs, sets SODA_DEBUG=1') do
     ENV['SODA_DEBUG'] = '1'
   end
+
+  opts.on('-ll', '--llparse', 'Set LLParse flag, default SLRParse') do
+    ENV['LLPARSE'] = '1'
+  end
 end
 
 optparse.parse!

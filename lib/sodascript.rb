@@ -7,6 +7,7 @@ require 'sodascript/grammar'
 require 'sodascript/slritem'
 require 'sodascript/slrtable'
 require 'sodascript/slrparser'
+require 'sodascript/llparser'
 
 ##
 # Main module of gem.
@@ -14,6 +15,7 @@ require 'sodascript/slrparser'
 
 module Sodascript
 
+  # YAML file where the token rules and grammar rules are defined.
   DEFAULT_RULES_FILE = "#{File.dirname(__FILE__)}/src/grammar.yml"
 
   ##
@@ -96,7 +98,7 @@ module Sodascript
   # Runs syntactic analysis
 
   def self.syntactic_analysis
-    @parser = SLRParser.new(@grammar)
+    @parser = ENV['LLPARSE'] && LLParser.new(@grammar) || SLRParser.new(@grammar)
     @parser.parse(@tokens)
   end
 end

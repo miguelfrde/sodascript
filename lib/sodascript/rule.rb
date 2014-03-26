@@ -12,6 +12,10 @@ module Sodascript
     # Rule's regular expression (Regexp)
     attr_reader :regex
 
+    ##
+    # Create a new token rule with a given symbol as a name
+    # and a regular expression that will be used to match this rule
+
     def initialize(name, regex)
       raise ArgumentError, 'name must be a Symbol' unless
         name.is_a?(Symbol)
