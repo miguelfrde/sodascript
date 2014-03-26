@@ -18,6 +18,12 @@ module Sodascript
     # Accept action representation
     ACCEPT = :accept
 
+    # Action table
+    attr_reader :action_table
+
+    # Go to Table
+    attr_reader :goto_table
+
     ##
     # Create a new table by specifying the terminals and non-terminals that it
     # will use.

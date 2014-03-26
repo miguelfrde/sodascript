@@ -39,47 +39,49 @@ module Sodascript
     # Run the LR parsing algorithm over a set of tokens
 
     def parse(tokens)
-      input = tokens.to_a
-      symbols = Array.new
-      stack = [ 0 ]
-      input.push (Sodascript::Token.new(Sodascript::Rule.new(Grammar::END_SYM, /^\$$/), "$"))
-      bc = 0
-      success = false;
+      @input = tokens
+      @symbols = Array.new
+      @stack = [ 0 ]
+      @input.push(Sodascript::Token.new(Sodascript::Rule.new(Grammar::END_SYM, /^\$$/), "$"))
+      @bc = 0
+      success = true
       rows = []
-      rows << ["#{stack.join(" ")}", " ", input[bc..-1].map {|x| x.rule.name}]
-      while true
-        s = stack[-1]
-        a, t = @table.action(s, input[bc].rule.name)
+      rows << ["#{@stack.join(" ")}", " ", @input[@bc..-1].map {|x| x.rule.name}]
+      while @bc < @input.size
+        s = @stack[-1]
+        a, t = @table.action(s, @input[@bc].rule.name)
         if a == SLRTable::SHIFT
-          stack.push(t)
-          bc += 1
+          @stack.push(t)
+          @bc += 1
         elsif a == SLRTable::REDUCE
           production = @prod_list[t]
-          stack.pop(production.cardinality)
-          t = stack[-1]
-          stack.push(@table.goto(t, production.lhs))
+          @stack.pop(production.cardinality)
+          t = @stack[-1]
+          @stack.push(@table.goto(t, production.lhs))
         elsif a == SLRTable::ACCEPT
-          success = true
           if ENV['SODA_DEBUG']
-            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Accept"]
+            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Accept"]
           end
           break
         else
           #Call error
+          success = false
+          SodaLogger.error("unexpected token #{@input[@bc]}")
           if ENV['SODA_DEBUG']
-            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Error"]
+            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Error unexpected #{@input[@bc]}"]
           end
-          break
+          error_handler()
         end
+
 
         if ENV['SODA_DEBUG']
           if a == SLRTable::SHIFT
-            symbols.push(input[bc-1].rule.name)
-            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Shift"]
+            @symbols.push(@input[@bc-1].rule.name)
+            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Shift"]
           elsif a == SLRTable::REDUCE
-            symbols.pop(production.cardinality)
-            symbols.push(production.lhs)
-            rows << ["#{stack.join(" ")}", symbols.to_s, input[bc..-1].map {|x| x.rule.name}, "Reduce by #{production}"]
+            @symbols.pop(production.cardinality)
+            @symbols.push(production.lhs)
+            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Reduce by #{production}"]
           end
 
         end
@@ -90,10 +92,40 @@ module Sodascript
         puts table
       end
 
+      if success
+        SodaLogger.success("parsing completed correctly")
+      else
+        SodaLogger.fail("errors were found while parsing")
+      end
+
       success
     end
 
     private
+
+    ##
+    # Handles parsing errors
+
+    def error_handler()
+      @stack.reverse_each do |i|
+        unless @table.goto_table[i].nil?
+          #iterar hasta que con la entrada me pueda ir a otro lado
+          non_terminal, state = @table.goto_table[i].first
+          while @bc < @input.size
+            unless @table.action(state, @input[@bc].rule.name).nil?
+              @stack.push(state) #push state Ik
+              @symbols.push(non_terminal)
+              break
+            else
+              @bc += 1 #Discard all symbols from the input till s’
+            end
+          end
+          break
+        end
+        @stack.pop
+      end
+    end
+
 
 
     ##
