@@ -88,7 +88,8 @@ module Sodascript
     @lexer = Lexer.new
     @token_rules.each { |name, rule| @lexer.add_rule(name, rule) }
     @ignore_rules.each { |name, rule| @lexer.ignore(name, rule) }
-    @tokens = @lexer.tokenize_file(@soda_file)
+    # TODO: we shouldn't be calling to_a here
+    @tokens = @lexer.tokenize_file(@soda_file).to_a
   end
 
   ##
