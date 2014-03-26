@@ -50,12 +50,12 @@ module Sodascript
     # Performs the lexical analysis over _string_ using the defined rules.
 
     def tokenize(string)
-      return to_enum(:tokenize, string) unless block_given?
       current  = ''
       previous = ''
       identifies_previous = false
       line = 0
       errors_found = false
+      result = []
       string.each_char do |c|
         br_found = false
         if previous == '$' || ignores?(previous)
@@ -76,7 +76,7 @@ module Sodascript
         # If current doesn't match and previous matches, then previous is a token
         # If none of them matched, then continue with next character
         if !identifies_current && identifies_previous
-          yield get_token(previous)
+          result << get_token(previous)
           previous = c.clone
           current = c.clone
           identifies_previous = identifies?(previous)
@@ -85,7 +85,7 @@ module Sodascript
           identifies_previous = identifies_current
         end
 
-        yield Token.new(Rule.new(:br, /^\n$/), "\n") if br_found
+        result << Token.new(Rule.new(:br, /^\n$/), "\n") if br_found
 
         if br_found && !ignores?(current) && current != "$"
           SodaLogger.error("Unknown tokens in line #{line}: #{current[0..-2]}")
@@ -99,13 +99,16 @@ module Sodascript
       unless previous.empty? || ignores?(previous) || previous == '$'
         token = get_token(previous)
         raise "Unknown token '#{previous}' in the end" if token.nil?
-        yield token
+        result << token
       end
 
       if errors_found
         SodaLogger::fail("Errors found while performing lexical analysis",
           ENV.has_key?('SODA_DEBUG'))
       end
+
+      result.pop until result.empty? || result[-1].rule.name != :br
+      (result.empty? && [Token.new(Rule.new(:br, /^\n$/), "\n")]) || result
     end
 
     ##

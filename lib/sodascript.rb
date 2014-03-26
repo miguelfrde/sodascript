@@ -72,9 +72,9 @@ module Sodascript
       puts "\nLexical analysis completed, tokens found:"
       @tokens.each { |token| puts "    #{token}" }
     end
+    SodaLogger.success("Lexical analysis completed successfuly")
 
     self.syntactic_analysis
-    puts "\nParsing completed" if ENV['SODA_DEBUG']
 
     # TODO: Semantic analysis
 
@@ -91,7 +91,7 @@ module Sodascript
     @token_rules.each { |name, rule| @lexer.add_rule(name, rule) }
     @ignore_rules.each { |name, rule| @lexer.ignore(name, rule) }
     # TODO: we shouldn't be calling to_a here
-    @tokens = @lexer.tokenize_file(@soda_file).to_a
+    @tokens = @lexer.tokenize_file(@soda_file)
   end
 
   ##
