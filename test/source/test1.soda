@@ -1,0 +1,42 @@
+class Dummy # a class
+    readable    attr1, attr2
+    writable    attr1, attr2
+    attribute   attr1, attr2
+
+    function init(arg1, arg2)
+        # Code here
+        x = 5
+    end
+
+
+    function f(arg1)
+        variable = arg1
+        if x==1 do
+            i = 10
+            while i > 0 do
+                i-=1
+                print "something " + 'something "else"' + ' "even" more'
+            end
+        elsif false or 2 do
+            for i in 1:10,2 do
+                # do something
+                pass = 5
+            end
+        else # we don't need a do here, do we?
+            x = [1, 2, 3]
+            y = {1: "x", y: [1,2,3]}
+            x[1] = false or true
+            y{5} = -1
+            pass = 6
+        end
+
+        variable = 1 if arg1 == 2 else 4
+
+        case variable
+            when 1 do x >>= 3
+            when 6 do x **= (3+4)*5
+        end
+
+        return variable
+    end
+end
