@@ -1,8 +1,8 @@
 
 :tokens:
-  :and:         !ruby/regexp   /^and|&&$/
-  :or:          !ruby/regexp   /^or|\|\|$/
-  :not:         !ruby/regexp   /^not|!$/
+  :and:         !ruby/regexp   /^(and|&&)$/
+  :or:          !ruby/regexp   /^(or|\|\|)$/
+  :not:         !ruby/regexp   /^(not|!)$/
   :if:          !ruby/regexp   /^if$/
   :unless:      !ruby/regexp   /^unless$/
   :else:        !ruby/regexp   /^else$/
@@ -29,7 +29,7 @@
   :writable:    !ruby/regexp   /^writable$/
   :attribute:   !ruby/regexp   /^attribute$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
-  :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
+  :dec_num:     !ruby/regexp   /^([+-]?\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
   :bin_num:     !ruby/regexp   /^0b[01]+$/
   :oct_num:     !ruby/regexp   /^0[0-7]+$/
@@ -127,6 +127,16 @@
   :INLINE_BLOCK:
     - - :ASSIGN
     - - :PRINT
+    - - :break
+    - - :continue
+    - - :RETURN
+    - - :NAME
+      - :(
+      - :FUN_ARGS
+      - :)
+    - - :NAME
+      - :(
+      - :)
   :PRINT:
     - - :print
       - :PRINT_ARGS
@@ -167,10 +177,20 @@
     - - :writable
     - - :attribute
   :NAME:
-    - - :name
-    - - :name
+    - - :ALL_NAME
+    - - :ALL_NAME
       - :.
       - :NAME
+  :ALL_NAME:
+    - - :name
+      - :{
+      - :ANY_NAME
+      - :}
+    - - :name
+      - :[
+      - :EXPR
+      - :]
+    - - :name
   :CALLABLE_NAME:
     - - :NAME
     - - :NAME
@@ -181,8 +201,8 @@
       - :FUN_ARGS
       - :)
   :FUN_ARGS:
-    - - :NAME
-    - - :NAME
+    - - :EXPR
+    - - :EXPR
       - :,
       - :FUN_ARGS
   :CONTROL_STRUCT:
@@ -244,7 +264,7 @@
       - :PARAMETERS
       - :)
       - :BLOCK_SUITE
-      - :RETURN
+      - :end
   :PARAMETERS:
     - - :MULTIPLE_PARAMETERS
     - - :epsilon
@@ -254,14 +274,9 @@
       - :MULTIPLE_PARAMETERS
     - - :name
   :RETURN:
-    - - :end
     - - :return
       - :EXPR
-      - :BR
-      - :end
     - - :return
-      - :EXPR
-      - :end
   :ATTR_ACCESSORS:
     - - :ATTRIBUTE_ACCESSOR
       - :ACCESSOR_CONTENT
@@ -344,8 +359,8 @@
     - - :string
     - - :NUMBER
     - - :CALLABLE_NAME
-    - - :LIST_ACCESSOR
-    - - :HASH_ACCESSOR
+    - - :LIST
+    - - :HASH
   :LIST:
     - - :[
       - :LIST_ARGS
@@ -363,7 +378,7 @@
       - :}
     - - :{
       - :}
-  :HAHS_ARGS:
+  :HASH_ARGS:
     - - :ANY_NAME
       - :'::'
       - :ANY_NAME
@@ -372,21 +387,6 @@
       - :ANY_NAME
       - :,
       - :HASH_ARGS
-  :LIST_ACCESSOR:
-    - - :name
-      - :[
-      - :LIST_ACCESOR_ARG
-      - :]
-  :LIST_ACCESOR_ARG:
-    - - :NUMBER
-    - - :CALLABLE_NAME
-    - - :LIST_ACCESSOR
-    - - :HASH_ACCESSOR
-  :HASH_ACCESSOR:
-    - - :name
-      - :{
-      - :ANY_NAME
-      - :}
   :ATOM:
     - - :CALLABLE_NAME
     - - :string
@@ -394,6 +394,10 @@
     - - :(
       - :EXPR
       - :)
+    - - :LIST
+    - - :HASH
+    - - :BOOLEAN_OP
+    - - :null
   :EXPR:
     - - :OR
   :OR:
