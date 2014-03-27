@@ -1,0 +1,33 @@
+
+:tokens:
+  :id:          !ruby/regexp   /^id$/
+  :'+':         !ruby/regexp   /^\+$/
+  :'*':         !ruby/regexp   /^\*$/
+  :'(':         !ruby/regexp   /^\($/
+  :')':         !ruby/regexp   /^\)$/
+
+:ignore:
+  :comment:     !ruby/regexp   /^\#.+\$$/
+
+:grammar:
+  :PROGRAM:
+    - - :T
+      - :EP
+  :EP:
+    - - :+
+      - :T
+      - :EP
+    - - :epsilon
+  :T:
+    - - :F
+      - :TP
+  :TP:
+    - - :*
+      - :F
+      - :TP
+    - - :epsilon
+  :F:
+    - - :(
+      - :PROGRAM
+      - :)
+    - - :id
