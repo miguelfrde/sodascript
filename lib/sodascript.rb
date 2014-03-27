@@ -76,6 +76,7 @@ module Sodascript
     SodaLogger.success("Lexical analysis completed successfuly")
 
     self.syntactic_analysis
+    SodaLogger.success("Parsing completed successfuly")
 
     # TODO: Semantic analysis
 

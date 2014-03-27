@@ -94,13 +94,8 @@ module Sodascript
         puts table
       end
 
-      if success
-        SodaLogger.success("Parsing completed successfuly")
-      else
-        SodaLogger.fail("errors were found while parsing", !ENV['SODA_DEBUG'].nil?)
-      end
-
-      success
+      SodaLogger.fail("errors were found while parsing",
+        !ENV['SODA_DEBUG'].nil?) unless success
     end
 
     private
