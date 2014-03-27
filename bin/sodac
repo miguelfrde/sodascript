@@ -15,6 +15,12 @@ optparse = OptionParser.new do |opts|
 
   opts.on('-ll', '--llparse', 'Set LLParse flag, default SLRParse') do
     ENV['LLPARSE'] = '1'
+    ENV['GRAMMAR_FILE'] = "#{File.dirname(__FILE__)}/../lib/src/grammarll.yml"
+  end
+
+  opts.on('-f', '--grammar ARG',
+      'Use another grammar defined in the given YAML file') do |arg|
+    ENV['GRAMMAR_FILE'] = "#{ARG}"
   end
 end
 

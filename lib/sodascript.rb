@@ -27,6 +27,7 @@ module Sodascript
     abort 'Wrong arguments, see help' unless args.size == 2
     @soda_file = args[0]
     @js_file = args[1]
+    @grammar_file = ENV['GRAMMAR_FILE'] || DEFAULT_RULES_FILE
     self.load_grammar
     self.compile
   end
@@ -35,7 +36,7 @@ module Sodascript
   # Loads the grammar rules and token rules from a file
 
   def self.load_grammar(file = DEFAULT_RULES_FILE)
-    data = YAML.load_file(file)
+    data = YAML.load_file(@grammar_file)
     @token_rules = data[:tokens]
     @ignore_rules = data[:ignore]
     grammar_rules = data[:grammar]
