@@ -1,0 +1,30 @@
+class Node
+    attribute left, right, value
+
+    function init(val)
+        self.value = val
+    end
+
+end
+
+class BinaryTree
+
+    function init(val)
+        self.root  = Node(val)
+    end
+
+    function insert(val)
+        root = _insert(root, val)
+    end
+
+    function _insert(node, val)
+        node = Node(val) if node == null else node
+        if val < node.value do
+            node.left = _insert(node.left, val)
+        else
+            node.right = _insert(node.right, val)
+        end
+        return node
+    end
+
+end
