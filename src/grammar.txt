@@ -28,7 +28,7 @@ ATTRIBUTE_ACCESSOR ::= readable | writable | attribute
 
 NAME ::= ALL_NAME | ALL_NAME . NAME
 
-ALL_NAME ::= name { ANY_NAME } | name [ EXPR ] | name
+ALL_NAME ::= name { EXPR } | name [ EXPR ] | name
 
 CALLABLE_NAME ::= NAME | NAME ( ) | NAME ( FUN_ARGS )
 
@@ -90,15 +90,13 @@ WHENS ::= WHEN_STMT | WHEN_STMT WHENS
 
 WHEN_STMT ::= when EXPR do BLOCK_SUITE
 
-ANY_NAME ::= string | NUMBER | CALLABLE_NAME | LIST | HASH
-
 LIST ::= [ LIST_ARGS ] | [ ]
 
-LIST_ARGS ::= ANY_NAME | ANY_NAME , LIST_ARGS
+LIST_ARGS ::= EXPR | EXPR , LIST_ARGS
 
 HASH ::= { HASH_ARGS } | {  }
 
-HASH_ARGS ::= ANY_NAME '::' ANY_NAME | ANY_NAME '::' ANY_NAME , HASH_ARGS
+HASH_ARGS ::= EXPR '::' EXPR | EXPR '::' EXPR , HASH_ARGS
 
 ATOM ::= CALLABLE_NAME | string | NUMBER | ( EXPR ) | LIST | HASH | BOOLEAN_OP | null
 

@@ -29,7 +29,7 @@
   :writable:    !ruby/regexp   /^writable$/
   :attribute:   !ruby/regexp   /^attribute$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
-  :dec_num:     !ruby/regexp   /^([+-]?\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
+  :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
   :bin_num:     !ruby/regexp   /^0b[01]+$/
   :oct_num:     !ruby/regexp   /^0[0-7]+$/
@@ -184,7 +184,7 @@
   :ALL_NAME:
     - - :name
       - :{
-      - :ANY_NAME
+      - :EXPR
       - :}
     - - :name
       - :[
@@ -355,12 +355,6 @@
       - :EXPR
       - :do
       - :BLOCK_SUITE
-  :ANY_NAME:
-    - - :string
-    - - :NUMBER
-    - - :CALLABLE_NAME
-    - - :LIST
-    - - :HASH
   :LIST:
     - - :[
       - :LIST_ARGS
@@ -368,8 +362,8 @@
     - - :[
       - :]
   :LIST_ARGS:
-    - - :ANY_NAME
-    - - :ANY_NAME
+    - - :EXPR
+    - - :EXPR
       - :,
       - :LIST_ARGS
   :HASH:
@@ -379,12 +373,12 @@
     - - :{
       - :}
   :HASH_ARGS:
-    - - :ANY_NAME
+    - - :EXPR
       - :'::'
-      - :ANY_NAME
-    - - :ANY_NAME
+      - :EXPR
+    - - :EXPR
       - :'::'
-      - :ANY_NAME
+      - :EXPR
       - :,
       - :HASH_ARGS
   :ATOM:

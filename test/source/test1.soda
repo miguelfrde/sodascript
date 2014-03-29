@@ -1,6 +1,7 @@
-class Dummy # a class
-    readable    attr1, attr2
-    writable    attr1, attr2
+
+class Dummy
+readable    attr1, attr2
+writable    attr1, attr2
     attribute   attr1, attr2
 
     function init(arg1, arg2)
@@ -21,10 +22,19 @@ class Dummy # a class
             for i in 1:10,2 do
                 # do something
                 pass = 5
+                for i in 1:10,2 do
+                    # do something
+                    pass = 5
+                end
+                for i in 1:10,2 do
+                    # do something
+                    pass = 5
+                end
             end
         else # we don't need a do here, do we?
             x = [1, 2, 3]
-            y = {1: "x", y: [1,2,3]}
+            y = {1: "x", y: [1,2,-3]}
+            y = {1: {1: 2}}
             x[1] = false or true
             y{5} = -1
             pass = 6
@@ -33,7 +43,7 @@ class Dummy # a class
         variable = 1 if arg1 == 2 else 4
 
         case variable
-            when 1 do x >>= 3
+            when 1 do x = -3
             when 6 do x **= (3+4)*5
         end
 
