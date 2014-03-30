@@ -85,7 +85,9 @@ module Sodascript
           identifies_previous = identifies_current
         end
 
-        result << Token.new(Rule.new(:br, /^\n$/), "\n") if br_found
+        if br_found and not result.empty? and result[-1].rule.name != :br
+          result << Token.new(Rule.new(:br, /^\n$/), "\n")
+        end
 
         if br_found && !ignores?(current) && current != "$"
           SodaLogger.error("Unknown tokens in line #{line}: #{current[0..-2]}")
@@ -108,7 +110,7 @@ module Sodascript
       end
 
       result.pop until result.empty? || result[-1].rule.name != :br
-      (result.empty? && [Token.new(Rule.new(:br, /^\n$/), "\n")]) || result
+      result
     end
 
     ##

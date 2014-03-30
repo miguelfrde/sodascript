@@ -88,42 +88,36 @@
 
 :grammar:
   :PROGRAM:
-    - - :BR
+    - - :epsilon
     - - :SUPERPROGRAM
-    - - :BR
-      - :SUPERPROGRAM
   :SUPERPROGRAM:
     - - :ANYTHING
     - - :ANYTHING
-      - :BR
+      - :br
       - :SUPERPROGRAM
-  :BR:
-    - - :br
-    - - :br
-      - :BR
   :ANYTHING:
     - - :INLINE_BLOCK
     - - :CLASS
     - - :CONTROL_STRUCT
     - - :FUNCTION
   :BLOCK_SUITE:
-    - - :BR
+    - - :br
       - :BLOCK
     - - :BLOCK
   :BLOCK:
     - - :CONTROL_STRUCT
-      - :BR
+      - :br
       - :BLOCK
     - - :INLINE_BLOCK
-      - :BR
+      - :br
       - :BLOCK
     - - :CONTROL_STRUCT
-      - :BR
+      - :br
     - - :INLINE_BLOCK_SUITE
   :INLINE_BLOCK_SUITE:
     - - :INLINE_BLOCK
     - - :INLINE_BLOCK
-      - :BR
+      - :br
   :INLINE_BLOCK:
     - - :ASSIGN
     - - :PRINT
@@ -243,14 +237,14 @@
   :CLASS:
     - - :class
       - :name
-      - :BR
+      - :br
       - :CLASS_BODY_SUITE
       - :end
   :CLASS_BODY_SUITE:
     - - :CLASS_BODY
-      - :BR
+      - :br
     - - :CLASS_BODY
-      - :BR
+      - :br
       - :CLASS_BODY_SUITE
   :CLASS_BODY:
     - - :ATTR_ACCESSORS
@@ -344,7 +338,7 @@
     - - :end
   :WHENS_SUITE:
     - - :WHENS
-    - - :BR
+    - - :br
       - :WHENS
   :WHENS:
     - - :WHEN_STMT
