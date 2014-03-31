@@ -40,12 +40,12 @@ module Sodascript
     # symbol
 
     def shift(from_state, symbol, to_state)
-      check_for_conflict(@action_table, from_state, symbol,to_state, SHIFT)
-      check_for_conflict(@goto_table, from_state, symbol, to_state, SHIFT)  
 
       if @non_terminals.include?(symbol)
+        check_for_conflict(@goto_table, from_state, symbol, to_state)
         (@goto_table[from_state] ||= {})[symbol] = to_state
       elsif @terminals.include?(symbol)
+        check_for_conflict(@action_table, from_state, symbol, [SHIFT, to_state])
         (@action_table[from_state] ||= {})[symbol] = [SHIFT, to_state]
       else
         raise ArgumentError, 'symbol must be a terminal or a non-terminal'
@@ -57,7 +57,7 @@ module Sodascript
     # terminal
 
     def reduce(from_state, symbol, prod_index)
-      check_for_conflict(@action_table, from_state, symbol, prod_index, REDUCE)
+      check_for_conflict(@action_table, from_state, symbol, [REDUCE, prod_index])
       raise ArgumentError, 'symbol must be a terminal' unless
         @terminals.include?(symbol)
 
@@ -68,8 +68,8 @@ module Sodascript
     # Add an accept action to a state with a specified terminal
 
     def accept(state, symbol)
-      raise ArgumentError, 'symbol must be a terminal' unless 
-        @terminals.include?(symbol) 
+      raise ArgumentError, 'symbol must be a terminal' unless
+        @terminals.include?(symbol)
       (@action_table[state] ||= {})[symbol] = ACCEPT
     end
 
@@ -125,13 +125,15 @@ module Sodascript
     ##
     # Checks if there's a shift/reduce condlict on the given table
 
-    def check_for_conflict(table, from_state, symbol, to_state, action)
+    def check_for_conflict(table, state, sym, expected)
       begin
-        if table[from_state][symbol] != [action, to_state]
-          act, _ = table[from_state][symbol]
-          raise ArgumentError, "shift/#{action} conflict on #{from_state} with #{symbol}" if
-            act == SHIFT
-          raise ArgumentError, "#{action}/reduce conflict on #{from_state} with #{symbol}" if 
+        return if table[state][sym].nil?
+        if table[state][sym] != expected
+          act, state = table[state][sym]
+          a = (state.nil? && 'shift') || act.to_s.downcase
+          raise ArgumentError, "shift/#{a} conflict on #{state} with #{sym}" if
+            act == SHIFT || state.nil?
+          raise ArgumentError, "#{a}/reduce conflict on #{state} with #{sym}" if
             act == REDUCE
         end
       rescue NoMethodError
