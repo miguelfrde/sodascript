@@ -89,7 +89,11 @@ describe Sodascript::Lexer do
       tokens = @lexer.tokenize('test test2 mytest')
       eof_found = false
       tokens.all? do |token|
+<<<<<<< HEAD
         if token.lexeme == "$" && !eof_found
+=======
+        if token.lexeme == "$" and !eof_found
+>>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
           eof_found = true
           true
         else

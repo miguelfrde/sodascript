@@ -29,7 +29,7 @@
   :writable:    !ruby/regexp   /^writable$/
   :attribute:   !ruby/regexp   /^attribute$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
-  :dec_num:     !ruby/regexp   /^([+-]?\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
+  :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
   :bin_num:     !ruby/regexp   /^0b[01]+$/
   :oct_num:     !ruby/regexp   /^0[0-7]+$/
@@ -88,42 +88,36 @@
 
 :grammar:
   :PROGRAM:
-    - - :BR
+    - - :epsilon
     - - :SUPERPROGRAM
-    - - :BR
-      - :SUPERPROGRAM
   :SUPERPROGRAM:
     - - :ANYTHING
     - - :ANYTHING
-      - :BR
+      - :br
       - :SUPERPROGRAM
-  :BR:
-    - - :br
-    - - :br
-      - :BR
   :ANYTHING:
     - - :INLINE_BLOCK
     - - :CLASS
     - - :CONTROL_STRUCT
     - - :FUNCTION
   :BLOCK_SUITE:
-    - - :BR
+    - - :br
       - :BLOCK
     - - :BLOCK
   :BLOCK:
     - - :CONTROL_STRUCT
-      - :BR
+      - :br
       - :BLOCK
     - - :INLINE_BLOCK
-      - :BR
+      - :br
       - :BLOCK
     - - :CONTROL_STRUCT
-      - :BR
+      - :br
     - - :INLINE_BLOCK_SUITE
   :INLINE_BLOCK_SUITE:
     - - :INLINE_BLOCK
     - - :INLINE_BLOCK
-      - :BR
+      - :br
   :INLINE_BLOCK:
     - - :ASSIGN
     - - :PRINT
@@ -184,7 +178,7 @@
   :ALL_NAME:
     - - :name
       - :{
-      - :ANY_NAME
+      - :EXPR
       - :}
     - - :name
       - :[
@@ -243,14 +237,14 @@
   :CLASS:
     - - :class
       - :name
-      - :BR
+      - :br
       - :CLASS_BODY_SUITE
       - :end
   :CLASS_BODY_SUITE:
     - - :CLASS_BODY
-      - :BR
+      - :br
     - - :CLASS_BODY
-      - :BR
+      - :br
       - :CLASS_BODY_SUITE
   :CLASS_BODY:
     - - :ATTR_ACCESSORS
@@ -344,7 +338,7 @@
     - - :end
   :WHENS_SUITE:
     - - :WHENS
-    - - :BR
+    - - :br
       - :WHENS
   :WHENS:
     - - :WHEN_STMT
@@ -355,12 +349,6 @@
       - :EXPR
       - :do
       - :BLOCK_SUITE
-  :ANY_NAME:
-    - - :string
-    - - :NUMBER
-    - - :CALLABLE_NAME
-    - - :LIST
-    - - :HASH
   :LIST:
     - - :[
       - :LIST_ARGS
@@ -368,8 +356,8 @@
     - - :[
       - :]
   :LIST_ARGS:
-    - - :ANY_NAME
-    - - :ANY_NAME
+    - - :EXPR
+    - - :EXPR
       - :,
       - :LIST_ARGS
   :HASH:
@@ -379,12 +367,12 @@
     - - :{
       - :}
   :HASH_ARGS:
-    - - :ANY_NAME
+    - - :EXPR
       - :'::'
-      - :ANY_NAME
-    - - :ANY_NAME
+      - :EXPR
+    - - :EXPR
       - :'::'
-      - :ANY_NAME
+      - :EXPR
       - :,
       - :HASH_ARGS
   :ATOM:
