@@ -39,63 +39,43 @@ module Sodascript
     # Run the LR parsing algorithm over a set of tokens
 
     def parse(tokens)
-      @input = tokens
+      @tokens = tokens
+      @input = @tokens.next
       @symbols = Array.new
       @stack = [ 0 ]
-      @input.push(Sodascript::Token.new(Sodascript::Rule.new(Grammar::END_SYM, /^\$$/), "$"))
-      @bc = 0
       success = true
-      rows = []
-      rows << ["#{@stack.join(" ")}", " ", @input[@bc..-1].map {|x| x.rule.name}]
       @line = 1
-      while @bc < @input.size
+      while true
+        begin
         s = @stack[-1]
-        a, t = @table.action(s, @input[@bc].rule.name)
+        a, t = @table.action(s, @input.rule.name)
         if a == SLRTable::SHIFT
           @stack.push(t)
-          @bc += 1
-          @line += 1 if @bc < @input.size && @input[@bc].rule.name == :br
+          @input = @tokens.next
+          @line += 1 if @input.rule.name == :br
         elsif a == SLRTable::REDUCE
           production = @prod_list[t]
           @stack.pop(production.cardinality)
           t = @stack[-1]
           @stack.push(@table.goto(t, production.lhs))
         elsif a == SLRTable::ACCEPT
-          if ENV['SODA_DEBUG']
-            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Accept"]
-          end
           break
         else
           # Call error
           success = false
-          SodaLogger.error("unexpected token #{@input[@bc]} in line #{@line}")
-          if ENV['SODA_DEBUG']
-            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Error unexpected #{@input[@bc]}"]
-          end
+          SodaLogger.error("unexpected token #{@input} in line #{@line}")
           error_handler()
-        end
-
-
-        if ENV['SODA_DEBUG']
-          if a == SLRTable::SHIFT
-            @symbols.push(@input[@bc-1].rule.name)
-            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Shift"]
-          elsif a == SLRTable::REDUCE
-            @symbols.pop(production.cardinality)
-            @symbols.push(production.lhs)
-            rows << ["#{@stack.join(" ")}", @symbols.to_s, @input[@bc..-1].map {|x| x.rule.name}, "Reduce by #{production}"]
+          if @unable_to_recover_anymore
+            break
           end
-
+        end
+        rescue StopIteration
+          SodaLogger.fail('unexpected exhaustion of tokens input')
         end
       end
 
-      if ENV['SODA_DEBUG']
-        table = Terminal::Table.new :headings => ['Stack', 'Symbols', 'Input', 'Action'], :rows => rows
-        puts table
-      end
-
-      SodaLogger.fail("errors were found while parsing",
-        !ENV['SODA_DEBUG'].nil?) unless success
+      SodaLogger.fail('errors were found while parsing',
+                      !ENV['SODA_DEBUG'].nil?) unless success
     end
 
     private
@@ -106,24 +86,33 @@ module Sodascript
     def error_handler()
       @stack.reverse_each do |i|
         unless @table.goto_table[i].nil?
-          #iterar hasta que con la entrada me pueda ir a otro lado
           non_terminal, state = @table.goto_table[i].first
-          while @bc < @input.size
-            unless @table.action(state, @input[@bc].rule.name).nil?
+          while true
+            unless @table.action(state, @input.rule.name).nil?
               @stack.push(state) #push state Ik
               @symbols.push(non_terminal)
               break
             else
-              @bc += 1 #Discard all symbols from the input till s'
-              @line += 1 if @bc < @input.size && @input[@bc].rule.name == :br
+              begin
+              @input = @tokens.next
+              @line += 1 if  @input.rule.name == :br
+              rescue StopIteration  #This happens when the only token left is END_SYMBOL, there's nothing else to do.
+                @unable_to_recover_anymore = true
+                return
+              end
             end
           end
           break
         end
         @stack.pop
         @symbols.pop
-        @bc += 1
-        @line += 1 if @bc < @input.size && @input[@bc].rule.name == :br
+
+        begin
+        @input = @tokens.next
+        @line += 1 if @input.rule.name == :br
+        rescue StopIteration  #This COULD happen when the only token left is END_SYMBOL, there's nothing else to do.
+          @unable_to_recover_anymore = true
+        end
       end
     end
 
