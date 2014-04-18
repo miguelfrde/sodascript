@@ -58,11 +58,7 @@ module Sodascript
       errors_found = false
       result = []
       array = string.chars.to_a
-<<<<<<< HEAD
       array.each_with_index do |c, i|
-=======
-      array.each_with_index do |c,i|
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
         br_found = false
         if previous == '$' || ignores?(previous)
           previous = ''
@@ -80,7 +76,6 @@ module Sodascript
         identifies_current = identifies?(current)
 
         is_token = !identifies_current && identifies_previous
-<<<<<<< HEAD
         pending_line_break = result.size > 1  && result[-1].rule.name == :br
 
         # Found non line break token so yield any pending line break
@@ -88,16 +83,6 @@ module Sodascript
         if  is_token && pending_line_break && i < array.size
           yield Token.new(Rule.new(:br, /^\n$/), "\n")
         end
-=======
-        pending_line_break = result.size > 1  && result[-1].rule.name == :br && i < array.size
-
-        # Found non line break token so yield any pending line break
-        # (There's a pending linebreak if the last index of result is a line break token)
-          if  is_token && pending_line_break
-            yield Token.new(Rule.new(:br, /^\n$/), "\n")
-          end
-
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
 
         # If current doesn't match and previous matches, then previous is a token
         # If none of them matched, then continue with next character
@@ -112,7 +97,6 @@ module Sodascript
           identifies_previous = identifies_current
         end
 
-<<<<<<< HEAD
         # Push line break to result
         if br_found && !result.empty?
           result << Token.new(Rule.new(:br, /^\n$/), "\n")
@@ -123,20 +107,6 @@ module Sodascript
           while result[-1].rule.name == :br && result[-2].rule.name == :br
             result.pop
           end
-=======
-
-        # Push line break to result
-        if br_found and not result.empty?
-          result << Token.new(Rule.new(:br, /^\n$/), "\n")
-        end
-
-
-        # Pop line breaks from result
-        if result.size > 1 and br_found and not result.empty?
-            while result[-1].rule.name == :br && result[-2].rule.name == :br
-              result.pop
-            end
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
         end
 
         if br_found && !ignores?(current) && current != "$"
@@ -160,17 +130,10 @@ module Sodascript
                          ENV.has_key?('SODA_DEBUG'))
       end
 
-<<<<<<< HEAD
       # Add input ending symbol to result and enumerator
       end_rule = Sodascript::Rule.new(Grammar::END_SYM, /^\$$/)
       result.push(Sodascript::Token.new(end_rule, "$"))
       yield result[-1]
-=======
-
-      # Add input ending symbol to result and enumerator
-       result.push(Sodascript::Token.new(Sodascript::Rule.new(Grammar::END_SYM, /^\$$/), "$"))
-       yield result[-1]
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
 
     end
 

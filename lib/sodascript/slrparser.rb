@@ -47,7 +47,6 @@ module Sodascript
       @line = 1
       while true
         begin
-<<<<<<< HEAD
           s = @stack[-1]
           a, t = @table.action(s, @input.rule.name)
           if a == SLRTable::SHIFT
@@ -70,30 +69,6 @@ module Sodascript
               break
             end
           end
-=======
-        s = @stack[-1]
-        a, t = @table.action(s, @input.rule.name)
-        if a == SLRTable::SHIFT
-          @stack.push(t)
-          @input = @tokens.next
-          @line += 1 if @input.rule.name == :br
-        elsif a == SLRTable::REDUCE
-          production = @prod_list[t]
-          @stack.pop(production.cardinality)
-          t = @stack[-1]
-          @stack.push(@table.goto(t, production.lhs))
-        elsif a == SLRTable::ACCEPT
-          break
-        else
-          # Call error
-          success = false
-          SodaLogger.error("unexpected token #{@input} in line #{@line}")
-          error_handler()
-          if @unable_to_recover_anymore
-            break
-          end
-        end
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
         rescue StopIteration
           SodaLogger.fail('unexpected exhaustion of tokens input')
         end
@@ -113,25 +88,15 @@ module Sodascript
         unless @table.goto_table[i].nil?
           non_terminal, state = @table.goto_table[i].first
           while true
-<<<<<<< HEAD
             if !@table.action(state, @input.rule.name).nil?
-=======
-            unless @table.action(state, @input.rule.name).nil?
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
               @stack.push(state) #push state Ik
               @symbols.push(non_terminal)
               break
             else
               begin
-<<<<<<< HEAD
                 @input = @tokens.next
                 @line += 1 if  @input.rule.name == :br
               rescue StopIteration  #The only token left is END_SYMBOL, nothing else to do.
-=======
-              @input = @tokens.next
-              @line += 1 if  @input.rule.name == :br
-              rescue StopIteration  #This happens when the only token left is END_SYMBOL, there's nothing else to do.
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
                 @unable_to_recover_anymore = true
                 return
               end
@@ -143,15 +108,9 @@ module Sodascript
         @symbols.pop
 
         begin
-<<<<<<< HEAD
           @input = @tokens.next
           @line += 1 if @input.rule.name == :br
         rescue StopIteration  #The only token left is END_SYMBOL, nothing else to do.
-=======
-        @input = @tokens.next
-        @line += 1 if @input.rule.name == :br
-        rescue StopIteration  #This COULD happen when the only token left is END_SYMBOL, there's nothing else to do.
->>>>>>> 4ba9731ad04094cd7c15a38a9a992326e6386367
           @unable_to_recover_anymore = true
         end
       end
