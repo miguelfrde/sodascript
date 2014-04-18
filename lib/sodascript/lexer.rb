@@ -50,13 +50,15 @@ module Sodascript
     # Performs the lexical analysis over _string_ using the defined rules.
 
     def tokenize(string)
+      return to_enum(:tokenize, string) unless block_given?
       current  = ''
       previous = ''
       identifies_previous = false
       line = 0
       errors_found = false
       result = []
-      string.each_char do |c|
+      array = string.chars.to_a
+      array.each_with_index do |c, i|
         br_found = false
         if previous == '$' || ignores?(previous)
           previous = ''
@@ -73,10 +75,20 @@ module Sodascript
         current << c
         identifies_current = identifies?(current)
 
+        is_token = !identifies_current && identifies_previous
+        pending_line_break = result.size > 1  && result[-1].rule.name == :br
+
+        # Found non line break token so yield any pending line break
+        # (There's a pending linebreak if the last index of result is a line break token)
+        if  is_token && pending_line_break && i < array.size
+          yield Token.new(Rule.new(:br, /^\n$/), "\n")
+        end
+
         # If current doesn't match and previous matches, then previous is a token
         # If none of them matched, then continue with next character
-        if !identifies_current && identifies_previous
+        if is_token
           result << get_token(previous)
+          yield get_token(previous)
           previous = c.clone
           current = c.clone
           identifies_previous = identifies?(previous)
@@ -85,7 +97,17 @@ module Sodascript
           identifies_previous = identifies_current
         end
 
-        result << Token.new(Rule.new(:br, /^\n$/), "\n") if br_found
+        # Push line break to result
+        if br_found && !result.empty?
+          result << Token.new(Rule.new(:br, /^\n$/), "\n")
+        end
+
+        # Pop line breaks from result
+        if result.size > 1 && br_found & !result.empty?
+          while result[-1].rule.name == :br && result[-2].rule.name == :br
+            result.pop
+          end
+        end
 
         if br_found && !ignores?(current) && current != "$"
           SodaLogger.error("Unknown tokens in line #{line}: #{current[0..-2]}")
@@ -100,15 +122,19 @@ module Sodascript
         token = get_token(previous)
         raise "Unknown token '#{previous}' in the end" if token.nil?
         result << token
+        yield token
       end
 
       if errors_found
         SodaLogger::fail("Errors found while performing lexical analysis",
-          ENV.has_key?('SODA_DEBUG'))
+                         ENV.has_key?('SODA_DEBUG'))
       end
 
-      result.pop until result.empty? || result[-1].rule.name != :br
-      (result.empty? && [Token.new(Rule.new(:br, /^\n$/), "\n")]) || result
+      # Add input ending symbol to result and enumerator
+      end_rule = Sodascript::Rule.new(Grammar::END_SYM, /^\$$/)
+      result.push(Sodascript::Token.new(end_rule, "$"))
+      yield result[-1]
+
     end
 
     ##
