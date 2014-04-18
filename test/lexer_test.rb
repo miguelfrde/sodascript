@@ -87,13 +87,15 @@ describe Sodascript::Lexer do
     it "returns an enumerator of matched tokens which lexemes are all
         identified" do
       tokens = @lexer.tokenize('test test2 mytest')
-      tokens.all?{ |token| @lexer.identifies?(token.lexeme)}.must_equal(true)
-    end
-
-    it "allows to pass a block to handle each token" do
-      @lexer.tokenize('test test2 mytest') do |token|
-        @lexer.identifies?(token.lexeme).must_equal(true)
-      end
+      eof_found = false
+      tokens.all? do |token|
+        if token.lexeme == "$" && !eof_found
+          eof_found = true
+          true
+        else
+          @lexer.identifies?(token.lexeme)
+        end
+      end.must_equal(true)
     end
   end
 end
