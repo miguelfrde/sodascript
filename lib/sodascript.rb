@@ -73,9 +73,9 @@ module Sodascript
       puts "\nLexical analysis completed, tokens found:"
       @tokens.each { |token| puts "    #{token}" }
     end
-    SodaLogger.success("Lexical analysis completed successfuly")
 
     self.syntactic_analysis
+    SodaLogger.success("Lexical analysis completed successfuly")
     SodaLogger.success("Parsing completed successfuly")
 
     # TODO: Semantic analysis

@@ -125,16 +125,11 @@ module Sodascript
         yield token
       end
 
-      if errors_found
-        SodaLogger::fail("Errors found while performing lexical analysis",
-                         ENV.has_key?('SODA_DEBUG'))
-      end
-
       # Add input ending symbol to result and enumerator
       end_rule = Sodascript::Rule.new(Grammar::END_SYM, /^\$$/)
       result.push(Sodascript::Token.new(end_rule, "$"))
       yield result[-1]
-
+      ENV['SODA_SUCCESS_LEXER'] == '1' if errors_found
     end
 
     ##

@@ -73,9 +73,8 @@ module Sodascript
           SodaLogger.fail('unexpected exhaustion of tokens input')
         end
       end
-
       SodaLogger.fail('errors were found while parsing',
-                      !ENV['SODA_DEBUG'].nil?) unless success
+        !ENV['SODA_DEBUG'].nil?) unless success && !ENV['SODA_SUCCESS_LEXER']
     end
 
     private
