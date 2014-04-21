@@ -26,11 +26,14 @@ def process_token_line(line, out_file, prev_name)
   name, rhs = prev_name, line[2..-1] unless rhs
   return '' unless rhs
   out_file.write("  :#{name}:\n") if prev_name != name
-  rhs.strip.split(' ').each_with_index do |symbol, index|
+  symbols, action = rhs.split(';')
+  symbols.strip.split(' ').each_with_index do |symbol, index|
     out_file.write('    - - ') if index == 0
     out_file.write('      - ') if index != 0
     out_file.write(":#{symbol}\n")
   end
+  action = '' if action.nil?
+  out_file.write("      - #{action.strip}\n")
   name
 end
 

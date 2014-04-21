@@ -89,127 +89,199 @@
 :grammar:
   :PROGRAM:
     - - :epsilon
+      - 
     - - :SUPERPROGRAM
+      - 
   :SUPERPROGRAM:
     - - :ANYTHING
+      - 
     - - :ANYTHING
       - :br
       - :SUPERPROGRAM
+      - 
   :ANYTHING:
     - - :INLINE_BLOCK
+      - 
     - - :CLASS
+      - 
     - - :CONTROL_STRUCT
+      - 
     - - :FUNCTION
+      - 
   :BLOCK_SUITE:
     - - :br
       - :BLOCK
+      - 
     - - :BLOCK
+      - 
   :BLOCK:
     - - :CONTROL_STRUCT
       - :br
       - :BLOCK
+      - 
     - - :INLINE_BLOCK
       - :br
       - :BLOCK
+      - 
     - - :CONTROL_STRUCT
       - :br
+      - 
     - - :INLINE_BLOCK_SUITE
+      - 
   :INLINE_BLOCK_SUITE:
     - - :INLINE_BLOCK
+      - 
     - - :INLINE_BLOCK
       - :br
+      - 
   :INLINE_BLOCK:
     - - :ASSIGN
+      - 
     - - :PRINT
+      - 
     - - :break
+      - 
     - - :continue
+      - 
     - - :RETURN
+      - 
     - - :NAME
       - :(
       - :FUN_ARGS
       - :)
+      - 
     - - :NAME
       - :(
       - :)
+      - 
   :PRINT:
     - - :print
       - :PRINT_ARGS
+      - 
   :NUMBER:
     - - :dec_num
+      - 
     - - :hex_num
+      - 
     - - :bin_num
+      - 
     - - :oct_num
+      - 
   :ASSIGN_OP:
     - - :+=
+      - 
     - - :-=
+      - 
     - - :*=
+      - 
     - - :/=
+      - 
     - - :**=
+      - 
     - - :%=
+      - 
     - - :>>=
+      - 
     - - :<<=
+      - 
     - - :&=
+      - 
     - - :|=
+      - 
     - - :^=
+      - 
     - - :=~
+      - 
     - - :!=
+      - 
     - - :=
+      - 
   :COMPARE_OP:
     - - :>
+      - 
     - - :<
+      - 
     - - :>=
+      - 
     - - :<=
+      - 
     - - :==
+      - 
     - - :!=
+      - 
     - - :~=
+      - 
     - - :!~
+      - 
   :BOOLEAN_OP:
     - - :true
+      - 
     - - :false
+      - 
   :ATTRIBUTE_ACCESSOR:
     - - :readable
+      - 
     - - :writable
+      - 
     - - :attribute
+      - 
   :NAME:
     - - :ALL_NAME
+      - 
     - - :ALL_NAME
       - :.
       - :NAME
+      - 
   :ALL_NAME:
     - - :name
       - :{
       - :EXPR
       - :}
+      - 
     - - :name
       - :[
       - :EXPR
       - :]
+      - 
     - - :name
+      - 
   :CALLABLE_NAME:
     - - :NAME
+      - 
     - - :NAME
       - :(
       - :)
+      - 
     - - :NAME
       - :(
       - :FUN_ARGS
       - :)
+      - 
   :FUN_ARGS:
     - - :EXPR
+      - 
     - - :EXPR
       - :,
       - :FUN_ARGS
+      - 
   :CONTROL_STRUCT:
     - - :IF_STMT
+      - 
     - - :WHILE_STMT
+      - 
     - - :UNLESS_STMT
+      - 
     - - :UNTIL_STMT
+      - 
     - - :FOR_STMT
+      - 
     - - :CASE_STMT
+      - 
   :ASSIGN:
     - - :NAME
       - :ASSIGN_OP
       - :EXPR
+      - 
     - - :NAME
       - :ASSIGN_OP
       - :EXPR
@@ -217,40 +289,53 @@
       - :EXPR
       - :else
       - :EXPR
+      - 
   :PRINT_ARGS:
     - - :EXPR
+      - 
     - - :EXPR
       - :,
       - :PRINT_ARGS
+      - 
   :RANGE:
     - - :RANGE_ITEM
       - :'::'
       - :RANGE_ITEM
+      - 
     - - :RANGE_ITEM
       - :'::'
       - :RANGE_ITEM
       - :,
       - :RANGE_ITEM
+      - 
   :RANGE_ITEM:
     - - :NUMBER
+      - 
     - - :CALLABLE_NAME
+      - 
   :CLASS:
     - - :class
       - :name
       - :br
       - :CLASS_BODY_SUITE
       - :end
+      - 
   :CLASS_BODY_SUITE:
     - - :CLASS_BODY
       - :br
+      - 
     - - :CLASS_BODY
       - :br
       - :CLASS_BODY_SUITE
+      - 
   :CLASS_BODY:
     - - :ATTR_ACCESSORS
+      - 
     - - :METHOD
+      - 
   :METHOD:
     - - :FUNCTION
+      - 
   :FUNCTION:
     - - :function
       - :name
@@ -259,56 +344,73 @@
       - :)
       - :BLOCK_SUITE
       - :end
+      - 
   :PARAMETERS:
     - - :MULTIPLE_PARAMETERS
+      - 
     - - :epsilon
+      - 
   :MULTIPLE_PARAMETERS:
     - - :name
       - :,
       - :MULTIPLE_PARAMETERS
+      - 
     - - :name
+      - 
   :RETURN:
     - - :return
       - :EXPR
+      - 
     - - :return
+      - 
   :ATTR_ACCESSORS:
     - - :ATTRIBUTE_ACCESSOR
       - :ACCESSOR_CONTENT
+      - 
   :ACCESSOR_CONTENT:
     - - :name
+      - 
     - - :name
       - :,
       - :ACCESSOR_CONTENT
+      - 
   :IF_STMT:
     - - :if
       - :EXPR
       - :do
       - :BLOCK_SUITE
       - :ELSIFS
+      - 
   :ELSIFS:
     - - :elsif
       - :EXPR
       - :do
       - :BLOCK_SUITE
       - :ELSIFS
+      - 
     - - :ELSE
+      - 
   :ELSE:
     - - :else
       - :BLOCK_SUITE
       - :end
+      - 
     - - :end
+      - 
   :UNLESS_STMT:
     - - :unless
       - :EXPR
       - :do
       - :BLOCK_SUITE
       - :ELSE
+      - 
   :WHILE_STMT:
     - - :while
       - :EXPR
       - :do
       - :BLOCK_SUITE
       - :end
+      - 
   :FOR_STMT:
     - - :for
       - :name
@@ -317,141 +419,202 @@
       - :do
       - :BLOCK_SUITE
       - :end
+      - 
   :FOR_STMT_AUX:
     - - :RANGE
+      - 
     - - :LIST
+      - 
   :UNTIL_STMT:
     - - :until
       - :EXPR
       - :do
       - :BLOCK_SUITE
       - :end
+      - 
   :CASE_STMT:
     - - :case
       - :CALLABLE_NAME
       - :WHENS_SUITE
       - :DEFAULT
+      - 
   :DEFAULT:
     - - :default
       - :BLOCK_SUITE
       - :end
+      - 
     - - :end
+      - 
   :WHENS_SUITE:
     - - :WHENS
+      - 
     - - :br
       - :WHENS
+      - 
   :WHENS:
     - - :WHEN_STMT
+      - 
     - - :WHEN_STMT
       - :WHENS
+      - 
   :WHEN_STMT:
     - - :when
       - :EXPR
       - :do
       - :BLOCK_SUITE
+      - 
   :LIST:
     - - :[
       - :LIST_ARGS
       - :]
+      - 
     - - :[
       - :]
+      - 
   :LIST_ARGS:
     - - :EXPR
+      - 
     - - :EXPR
       - :,
       - :LIST_ARGS
+      - 
   :HASH:
     - - :{
       - :HASH_ARGS
       - :}
+      - 
     - - :{
       - :}
+      - 
   :HASH_ARGS:
     - - :EXPR
       - :'::'
       - :EXPR
+      - 
     - - :EXPR
       - :'::'
       - :EXPR
       - :,
       - :HASH_ARGS
+      - 
   :ATOM:
     - - :CALLABLE_NAME
+      - 
     - - :string
+      - 
     - - :NUMBER
+      - 
     - - :(
       - :EXPR
       - :)
+      - 
     - - :LIST
+      - 
     - - :HASH
+      - 
     - - :BOOLEAN_OP
+      - 
     - - :null
+      - 
   :EXPR:
     - - :OR
+      - 
   :OR:
     - - :AND
+      - 
     - - :AND
       - :or
       - :OR
+      - 
   :AND:
     - - :NOT
+      - 
     - - :NOT
       - :and
       - :AND
+      - 
   :NOT:
     - - :not
       - :NOT
+      - 
     - - :COMPARISON
+      - 
   :COMPARISON:
     - - :XOR
+      - 
     - - :XOR
       - :COMPARE_OP
       - :COMPARISON
+      - 
   :XOR:
     - - :BITWISE_AND
+      - 
     - - :BITWISE_AND
       - :^
       - :XOR
+      - 
   :BITWISE_AND:
     - - :SHIFT
+      - 
     - - :SHIFT
       - :&
       - :BITWISE_AND
+      - 
   :SHIFT:
     - - :ARITH_EXPR
+      - 
     - - :ARITH_EXPR
       - :SHIFT_OP
       - :SHIFT
+      - 
   :SHIFT_OP:
     - - :<<
+      - 
     - - :>>
+      - 
   :ARITH_EXPR:
     - - :TERM
+      - 
     - - :TERM
       - :ARITH_OP
       - :ARITH_EXPR
+      - 
   :ARITH_OP:
     - - :+
+      - 
     - - :-
+      - 
   :TERM:
     - - :FACTOR
+      - 
     - - :FACTOR
       - :TERM_OP
       - :TERM
+      - 
   :TERM_OP:
     - - :*
+      - 
     - - :/
+      - 
     - - :%
+      - 
   :FACTOR:
     - - :FACTOR_OP
       - :FACTOR
+      - 
     - - :POWER
+      - 
   :FACTOR_OP:
     - - :+
+      - 
     - - :-
+      - 
     - - :~
+      - 
   :POWER:
     - - :ATOM
+      - 
     - - :ATOM
       - :**
       - :FACTOR
+      - 
