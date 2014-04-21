@@ -41,7 +41,6 @@ module Sodascript
     def parse(tokens)
       @tokens = tokens
       @input = @tokens.next
-      @symbols = Array.new
       @stack = [ 0 ]
       success = true
       @line = 1
@@ -65,9 +64,7 @@ module Sodascript
             success = false
             SodaLogger.error("unexpected token #{@input} in line #{@line}")
             error_handler()
-            if @unable_to_recover_anymore
-              break
-            end
+            break if @unable_to_recover_anymore
           end
         rescue StopIteration
           SodaLogger.fail('unexpected exhaustion of tokens input')
@@ -89,7 +86,6 @@ module Sodascript
           while true
             if !@table.action(state, @input.rule.name).nil?
               @stack.push(state) #push state Ik
-              @symbols.push(non_terminal)
               break
             else
               begin
@@ -104,7 +100,6 @@ module Sodascript
           break
         end
         @stack.pop
-        @symbols.pop
 
         begin
           @input = @tokens.next
@@ -114,8 +109,6 @@ module Sodascript
         end
       end
     end
-
-
 
     ##
     # Builds the SLR table used by parse() to parse a list of tokens.
