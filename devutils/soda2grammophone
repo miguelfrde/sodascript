@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require 'sodalogger'
+
+SodaLogger.fail('Usage: devutils/soda2grammophone out_file\n', false) if
+  ARGV.size == 0
+
+File.open(ARGV[0], 'w') do |grammophone_file|
+  prev_name = ''
+  File.read('src/grammar.txt').each_line do |line|
+    name, rhs = line.split('::=')
+    name, rhs = prev_name, line[2..-1] unless rhs
+    next unless rhs
+    symbols, _ = rhs.split(';')
+    symbols.strip!
+    symbols[/\./] = 'dot' if symbols[/\./]
+    symbols[/^=$/] = 'eq' if symbols[/^=$/]
+    symbols[/epsilon/] = '' if symbols[/epsilon/]
+    grammophone_file.write("#{name.strip} -> #{symbols} .\n")
+    prev_name = name
+  end
+end
