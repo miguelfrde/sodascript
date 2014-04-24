@@ -1,229 +1,228 @@
-PROGRAM ::= epsilon    ;
-| SUPERPROGRAM         ;
-
-SUPERPROGRAM ::= ANYTHING    ;
-| ANYTHING br SUPERPROGRAM   ;
-
-ANYTHING ::= INLINE_BLOCK    ;
-| CLASS                      ;
-| CONTROL_STRUCT             ;
-| FUNCTION                   ;
-
-BLOCK_SUITE ::= br BLOCK    ;
-| BLOCK                     ;
-
-BLOCK ::= CONTROL_STRUCT br BLOCK    ;
-| INLINE_BLOCK br BLOCK              ;
-| CONTROL_STRUCT br                  ;
-| INLINE_BLOCK_SUITE                 ;
-
-INLINE_BLOCK_SUITE ::= INLINE_BLOCK    ;
-| INLINE_BLOCK br                      ;
-
-INLINE_BLOCK ::= ASSIGN    ;
-| PRINT                    ;
-| break                    ;
-| continue                 ;
-| RETURN                   ;
-| NAME ( FUN_ARGS )        ;
-| NAME ( )                 ;
+PROGRAM ::= epsilon    ; []
+| SUPERPROGRAM         ; syms[0]
+
+SUPERPROGRAM ::= ANYTHING    ; [syms[0]]
+| ANYTHING br SUPERPROGRAM   ; [syms[0]] + syms[2]
+
+ANYTHING ::= INLINE_BLOCK    ; syms[0]
+| CLASS                      ; syms[0]
+| CONTROL_STRUCT             ; syms[0]
+| FUNCTION                   ; syms[0]
+
+BLOCK_SUITE ::= br BLOCK    ; syms[1]
+| BLOCK                     ; syms[0]
+
+BLOCK ::= CONTROL_STRUCT br BLOCK    ; [syms[0]] + syms[2]
+| INLINE_BLOCK br BLOCK              ; [syms[0]] + syms[2]
+| CONTROL_STRUCT br                  ; [syms[0]]
+| INLINE_BLOCK_SUITE                 ; [syms[0]]
+
+INLINE_BLOCK_SUITE ::= INLINE_BLOCK    ; syms[0]
+| INLINE_BLOCK br                      ; syms[0]
+
+INLINE_BLOCK ::= ASSIGN    ; syms[0]
+| PRINT                    ; syms[0]
+| break                    ; LoopControl.new("break")
+| continue                 ; LoopControl.new("continue")
+| RETURN                   ; syms[0]
+| NAME ( FUN_ARGS )        ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]}(#{syms[1]})")
+| NAME ( )                 ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]}()")
 
-PRINT ::= print PRINT_ARGS    ;
+PRINT ::= print PRINT_ARGS    ; Print.new(syms[1])
 
-NUMBER ::= dec_num    ;
-| hex_num             ;
-| bin_num             ;
-| oct_num             ;
+NUMBER ::= dec_num    ; Expression.new([], syms[0].lexeme)
+| hex_num             ; Expression.new([], syms[0].lexeme)
+| bin_num             ; Expression.new([], syms[0].lexeme)
+| oct_num             ; Expression.new([], syms[0].lexeme)
 
-ASSIGN_OP ::= +=    ;
-| -=                ;
-| *=                ;
-| /=                ;
-| **=               ;
-| %=                ;
-| >>=               ;
-| <<=               ;
-| &=                ;
-| |=                ;
-| ^=                ;
-| =~                ;
-| !=                ;
-| =                 ;
+ASSIGN_OP ::= +=    ; "+="
+| -=                ; "-="
+| *=                ; "*="
+| /=                ; "/="
+| **=               ; "**="
+| %=                ; "%="
+| >>=               ; ">>="
+| <<=               ; "<<="
+| &=                ; "&="
+| |=                ; "|="
+| ^=                ; "^="
+| =~                ; "=~"
+| !=                ; "!="
+| =                 ; "="
 
-COMPARE_OP ::= >    ;
-| <                 ;
-| >=                ;
-| <=                ;
-| ==                ;
-| !=                ;
-| ~=                ;
-| !~                ;
+COMPARE_OP ::= >    ; ">"
+| <                 ; "<"
+| >=                ; ">="
+| <=                ; "<="
+| ==                ; "=="
+| !=                ; "!="
+| ~=                ; "~="
+| !~                ; "!~"
 
-BOOLEAN_OP ::= true    ;
-| false    ;
+BOOLEAN_OP ::= true    ; "true"
+| false                ; "false"
 
-ATTRIBUTE_ACCESSOR ::= readable    ;
-| writable                         ;
-| attribute                        ;
+ATTRIBUTE_ACCESSOR ::= readable    ; "readable"
+| writable                         ; "writable"
+| attribute                        ; "attribute"
 
-NAME ::= ALL_NAME    ;
-| ALL_NAME . NAME    ;
+NAME ::= ALL_NAME    ; syms[0]
+| ALL_NAME . NAME    ; Variable.new(syms[0].name, "#{syms[0]}.#{syms[2]}", syms[0].variables)
 
-ALL_NAME ::= name { EXPR }    ;
-| name [ EXPR ]               ;
-| name                        ;
+ALL_NAME ::= name { EXPR }    ; Variable.new(syms[0].lexeme, syms[0].lexeme + "{" + syms[2].to_s + "}", syms[2].variables)
+| name [ EXPR ]               ; Variable.new(syms[0].lexeme, syms[0].lexeme + "[" + syms[2].to_s + "]", syms[2].variables)
+| name                        ; Variable.new(syms[0].lexeme, syms[0].lexeme, [])
 
-CALLABLE_NAME ::= NAME    ;
-| NAME ( )                ;
-| NAME ( FUN_ARGS )       ;
+CALLABLE_NAME ::= NAME    ; syms[0]
+| NAME ( )                ; Variable.new(syms[0].name, "#{syms[0]}()", syms[0].variables)
+| NAME ( FUN_ARGS )       ; Variable.new(syms[0].name, "#{syms[0]}(#{syms[2]})", syms[2].variables)
 
-FUN_ARGS ::= EXPR    ;
-| EXPR , FUN_ARGS    ;
+FUN_ARGS ::= EXPR    ; syms[0]
+| EXPR , FUN_ARGS    ; Expression.create(syms[0], ",", syms[2])
 
-CONTROL_STRUCT ::= IF_STMT    ;
-| WHILE_STMT                  ;
-| UNLESS_STMT                 ;
-| UNTIL_STMT                  ;
-| FOR_STMT                    ;
-| CASE_STMT                   ;
+CONTROL_STRUCT ::= IF_STMT    ; syms[0]
+| WHILE_STMT                  ; syms[0]
+| UNLESS_STMT                 ; syms[0]
+| UNTIL_STMT                  ; syms[0]
+| FOR_STMT                    ; syms[0]
+| CASE_STMT                   ; syms[0]
 
-ASSIGN ::= NAME ASSIGN_OP EXPR              ;
-| NAME ASSIGN_OP EXPR if EXPR else EXPR     ;
+ASSIGN ::= NAME ASSIGN_OP EXPR              ; Assign.new(syms[0], syms[1], syms[2])
+| NAME ASSIGN_OP EXPR if EXPR else EXPR      ; Assign.new(syms[0], syms[1], syms[2], InlineCondition.new(syms[4], syms[6]))
 
-PRINT_ARGS ::= EXPR     ;
-| EXPR , PRINT_ARGS     ;
+PRINT_ARGS ::= EXPR     ; syms[0]
+| EXPR , PRINT_ARGS     ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0],syms[2]}")
 
-RANGE ::= RANGE_ITEM '::' RANGE_ITEM        ;
-| RANGE_ITEM '::' RANGE_ITEM , RANGE_ITEM   ;
+RANGE ::= RANGE_ITEM '::' RANGE_ITEM        ; Range.new(syms[0], syms[2])
+| RANGE_ITEM '::' RANGE_ITEM , RANGE_ITEM   ; Range.new(syms[0], syms[2], syms[4])
 
-RANGE_ITEM ::= NUMBER   ;
-| CALLABLE_NAME         ;
+RANGE_ITEM ::= NUMBER   ; syms[0]
+| CALLABLE_NAME         ; syms[0]
 
-CLASS ::= class name br CLASS_BODY_SUITE end    ;
+CLASS ::= class name br CLASS_BODY_SUITE end    ; Class.new(syms[1].lexeme, syms[3])
 
-CLASS_BODY_SUITE ::= CLASS_BODY br      ;
-| CLASS_BODY br CLASS_BODY_SUITE        ;
+CLASS_BODY_SUITE ::= CLASS_BODY br      ; [syms[0]]
+| CLASS_BODY br CLASS_BODY_SUITE        ; [syms[0]] + syms[2]
 
-CLASS_BODY ::= ATTR_ACCESSORS   ;
-| METHOD                        ;
+CLASS_BODY ::= ATTR_ACCESSORS   ; syms[0]
+| METHOD                        ; syms[0]
 
-METHOD ::= FUNCTION     ;
+METHOD ::= FUNCTION     ; syms[0]
 
-FUNCTION ::= function name ( PARAMETERS ) BLOCK_SUITE end   ;
+FUNCTION ::= function name ( PARAMETERS ) BLOCK_SUITE end   ; Function.new(syms[1].lexeme, syms[3], syms[5])
 
-PARAMETERS ::= MULTIPLE_PARAMETERS      ;
-| epsilon                               ;
+PARAMETERS ::= MULTIPLE_PARAMETERS      ; syms[0]
+| epsilon                               ; []
 
-MULTIPLE_PARAMETERS ::= name , MULTIPLE_PARAMETERS      ;
-| name                                                  ;
+MULTIPLE_PARAMETERS ::= name , MULTIPLE_PARAMETERS      ; [syms[0].lexeme] + syms[2]
+| name                                                  ; [syms[0].lexeme]
 
-RETURN ::= return EXPR                                  ;
-| return                                                ;
+RETURN ::= return EXPR                                  ; Return.new(syms[1])
+| return                                                ; Return.new()
 
-ATTR_ACCESSORS ::= ATTRIBUTE_ACCESSOR ACCESSOR_CONTENT      ;
+ATTR_ACCESSORS ::= ATTRIBUTE_ACCESSOR ACCESSOR_CONTENT      ; AttributeAccessor.new(syms[0], syms[1])
 
-ACCESSOR_CONTENT ::= name   ;
-| name , ACCESSOR_CONTENT   ;
+ACCESSOR_CONTENT ::= name   ; [syms[0].lexeme]
+| name , ACCESSOR_CONTENT   ; [syms[0].lexeme] + syms[2]
 
-IF_STMT ::= if EXPR do BLOCK_SUITE ELSIFS       ;
+IF_STMT ::= if EXPR do BLOCK_SUITE ELSIFS ELSE     ; If.new(syms[1], syms[3], syms[4], syms[5])
 
-ELSIFS ::= elsif EXPR do BLOCK_SUITE ELSIFS     ;
-| ELSE                                          ;
+ELSIFS ::= elsif EXPR do BLOCK_SUITE ELSIFS        ; [Elsif.new(syms[1], syms[3])] + syms[4]
+| epsilon                                          ; []
 
-ELSE ::= else BLOCK_SUITE end                   ;
-| end                                           ;
+ELSE ::= else BLOCK_SUITE end                   ; syms[1]
+| end                                           ; []
 
-UNLESS_STMT ::= unless EXPR do BLOCK_SUITE ELSE     ;
+UNLESS_STMT ::= unless EXPR do BLOCK_SUITE ELSE     ; Unless.new(syms[1], syms[3], syms[4])
 
-WHILE_STMT ::= while EXPR do BLOCK_SUITE end    ;
+WHILE_STMT ::= while EXPR do BLOCK_SUITE end    ; While.new(syms[1], syms[3])
 
-FOR_STMT ::= for name in FOR_STMT_AUX do BLOCK_SUITE end    ;
+FOR_STMT ::= for name in FOR_STMT_AUX do BLOCK_SUITE end    ; For.new(Variable.new(syms[1].lexeme, syms[1].lexeme, []), syms[3], syms[5])
 
-FOR_STMT_AUX ::= RANGE      ;
-| LIST                      ;
+FOR_STMT_AUX ::= RANGE      ; syms[0]
+| LIST                      ; syms[0]
 
-UNTIL_STMT ::= until EXPR do BLOCK_SUITE end    ;
+UNTIL_STMT ::= until EXPR do BLOCK_SUITE end    ; While.new(Expression.new(syms[1].variables, "!(#{syms[1]})"), syms[3])
 
-CASE_STMT ::= case CALLABLE_NAME WHENS_SUITE DEFAULT    ;
+CASE_STMT ::= case CALLABLE_NAME WHENS_SUITE DEFAULT    ; Case.new(syms[1], syms[2], syms[3])
 
-DEFAULT ::= default BLOCK_SUITE end     ;
-| end                                   ;
+DEFAULT ::= default BLOCK_SUITE end     ; syms[1]
+| end                                   ; nil
 
-WHENS_SUITE ::= WHENS   ;
-| br WHENS              ;
+WHENS_SUITE ::= WHENS   ; syms[0]
+| br WHENS              ; syms[1]
 
-WHENS ::= WHEN_STMT     ;
-| WHEN_STMT WHENS       ;
+WHENS ::= WHEN_STMT     ; [syms[0]]
+| WHEN_STMT WHENS       ; [syms[0]] + syms[1]
 
-WHEN_STMT ::= when EXPR do BLOCK_SUITE      ;
+WHEN_STMT ::= when EXPR do BLOCK_SUITE      ; When.new(syms[1], syms[3])
 
-LIST ::= [ LIST_ARGS ]      ;
-| [ ]                       ;
+LIST ::= [ LIST_ARGS ]      ; Expression.new(syms[1].variables, "[#{syms[1]}]")
+| [ ]                       ; Expression.new([], "[]")
 
-LIST_ARGS ::= EXPR      ;
-| EXPR , LIST_ARGS      ;
+LIST_ARGS ::= EXPR      ; syms[0]
+| EXPR , LIST_ARGS      ; Expression.create(syms[0], ",", syms[2])
 
-HASH ::= { HASH_ARGS }  ;
-| {  }                  ;
+HASH ::= { HASH_ARGS }  ; Expression.new(syms[1].variables, "{" + syms[1].to_s + "}")
+| {  }                  ; Expression.new([], "{}")
 
-HASH_ARGS ::= EXPR '::' EXPR    ;
-| EXPR '::' EXPR , HASH_ARGS    ;
+HASH_ARGS ::= EXPR '::' EXPR    ; Expression.create(syms[0], ":", syms[2])
+| EXPR '::' EXPR , HASH_ARGS    ; Expression.new(syms[0].variables + syms[2].variables + syms[4].variables, "#{syms[0]}: #{syms[2]}, #{syms[4]}")
 
-ATOM ::= CALLABLE_NAME      ;
-| string                    ;
-| NUMBER                    ;
-| ( EXPR )                  ;
-| LIST                      ;
-| HASH                      ;
-| BOOLEAN_OP                ;
-| null                      ;
+ATOM ::= CALLABLE_NAME      ; syms[0]
+| string                    ; Expression.new([], syms[0].lexeme)
+| NUMBER                    ; syms[0]
+| ( EXPR )                  ; Expression.new(syms[1].variables, "(#{syms[1]})")
+| LIST                      ; syms[0]
+| HASH                      ; syms[0]
+| BOOLEAN_OP                ; Expression.new([], syms[0])
+| null                      ; Expression.new([], "null")
 
-EXPR ::= OR     ;
+EXPR ::= OR     ; syms[0]
 
-OR ::= AND      ;
-| AND or OR     ;
+OR ::= AND      ; syms[0]
+| AND or OR     ; Expression.create(syms[0], "||", syms[2])
 
-AND ::= NOT     ;
-| NOT and AND   ;
+AND ::= NOT     ; syms[0]
+| NOT and AND   ; Expression.create(syms[0], "&&", syms[2])
 
-NOT ::= not NOT     ;
-| COMPARISON        ;
+NOT ::= not NOT     ; Expression.new(syms[1].variables, "~#{syms[1]}")
+| COMPARISON        ; syms[0]
 
-COMPARISON ::= XOR              ;
-| XOR COMPARE_OP COMPARISON     ;
+COMPARISON ::= XOR              ; syms[0]
+| XOR COMPARE_OP COMPARISON     ; Expression.create(syms[0], syms[1], syms[2])
 
-XOR ::= BITWISE_AND     ;
-| BITWISE_AND ^ XOR     ;
+XOR ::= BITWISE_AND     ; syms[0]
+| BITWISE_AND ^ XOR     ; Expression.create(syms[0], "^", syms[2])
 
-BITWISE_AND ::= SHIFT   ;
-| SHIFT & BITWISE_AND   ;
+BITWISE_AND ::= SHIFT   ; syms[0]
+| SHIFT & BITWISE_AND   ; Expression.create(syms[0], "&", syms[2])
 
-SHIFT ::= ARITH_EXPR            ;
-| ARITH_EXPR SHIFT_OP SHIFT     ;
+SHIFT ::= ARITH_EXPR            ; syms[0]
+| ARITH_EXPR SHIFT_OP SHIFT     ; Expression.create(syms[0], syms[1], syms[2])
 
-SHIFT_OP ::= <<     ;
-| >>                ;
+SHIFT_OP ::= <<     ; "<<"
+| >>                ; ">>"
 
-ARITH_EXPR ::= TERM             ;
-| TERM ARITH_OP ARITH_EXPR      ;
+ARITH_EXPR ::= TERM             ; syms[0]
+| TERM ARITH_OP ARITH_EXPR      ; Expression.create(syms[0], syms[1], syms[2])
 
-ARITH_OP ::= +      ;
-| -                 ;
+ARITH_OP ::= +      ; "+"
+| -                 ; "-"
 
-TERM ::= FACTOR         ;
-| FACTOR TERM_OP TERM   ;
+TERM ::= FACTOR         ; syms[0]
+| FACTOR TERM_OP TERM   ; Expression.create(syms[0], syms[1], syms[2])
 
-TERM_OP ::= *       ;
-| /                 ;
-| %                 ;
+TERM_OP ::= *       ; "*"
+| /                 ; "/"
+| %                 ; "%"
 
-FACTOR ::= FACTOR_OP FACTOR     ;
-| POWER                         ;
+FACTOR ::= FACTOR_OP FACTOR     ; Expression.new(syms[1].variables, syms[0].to_s + syms[1].to_s)
+| POWER                         ; syms[0]
 
-FACTOR_OP ::= +     ;
-| -                 ;
-| ~                 ;
+FACTOR_OP ::= +     ; "+"
+| -                 ; "-"
+| ~                 ; "~"
 
-POWER ::= ATOM      ;
-| ATOM ** FACTOR    ;
-
+POWER ::= ATOM      ; syms[0]
+| ATOM ** FACTOR    ; Expression.create(syms[0], "**", syms[2])
