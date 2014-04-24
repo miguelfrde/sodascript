@@ -33,7 +33,7 @@ def process_token_line(line, out_file, prev_name)
     out_file.write(":#{symbol}\n")
   end
   action = '' if action.nil?
-  out_file.write("      - #{action.strip}\n")
+  out_file.write("      - '#{action.strip}'\n")
   name
 end
 
