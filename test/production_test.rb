@@ -10,34 +10,34 @@ describe Sodascript::Production do
     @p6 = Sodascript::Production.new(:K, '', :D)
   end
 
-  describe "#initialize" do
-    it "fails when there are no symbols in the right-hand side" do
-      ->{ Sodascript::Production.new(:test) }.must_raise ArgumentError
+  describe '#initialize' do
+    it 'fails when there are no symbols in the right-hand side' do
+      -> { Sodascript::Production.new(:test) }.must_raise ArgumentError
     end
 
-    it "fails when the left-hand side is not a symbol" do
-      ->{ Sodascript::Production.new('test', '') }.must_raise ArgumentError
-      ->{ Sodascript::Production.new(0, '') }.must_raise ArgumentError
+    it 'fails when the left-hand side is not a symbol' do
+      -> { Sodascript::Production.new('test', '') }.must_raise ArgumentError
+      -> { Sodascript::Production.new(0, '') }.must_raise ArgumentError
     end
 
-    it "fails when the right-hand side contains something that is not a Symbol
-        or a Rule" do
-      ->{ Sodascript::Production.new(:test, '', 'a') }.must_raise ArgumentError
-      ->{ Sodascript::Production.new(:t, '', :a, 'a') }.must_raise ArgumentError
-      ->{ Sodascript::Production.new(:t, '', :a, 'a') }.must_raise ArgumentError
-      ->{ Sodascript::Production.new(:test, '', 0) }.must_raise ArgumentError
-      ->{ Sodascript::Production.new(:t, '', :a, 0) }.must_raise ArgumentError
+    it 'fails when the right-hand side contains something that is not a Symbol
+        or a Rule' do
+      -> { Sodascript::Production.new(:test, '', 'a') }.must_raise ArgumentError
+      -> { Sodascript::Production.new(:t, '', 'a') }.must_raise ArgumentError
+      -> { Sodascript::Production.new(:t, '', 'a') }.must_raise ArgumentError
+      -> { Sodascript::Production.new(:test, '', 0) }.must_raise ArgumentError
+      -> { Sodascript::Production.new(:t, '', :a, 0) }.must_raise ArgumentError
     end
 
-    it "fails when the action is not a string" do
-      ->{ Sodascript::Production.new(:test, :x, 'a') }.must_raise ArgumentError
-      ->{ Sodascript::Production.new(:test, 1, 'a') }.must_raise ArgumentError
+    it 'fails when the action is not a string' do
+      -> { Sodascript::Production.new(:test, :x, 'a') }.must_raise ArgumentError
+      -> { Sodascript::Production.new(:test, 1, 'a') }.must_raise ArgumentError
     end
   end
 
-  describe "when checking if two Productions are equal" do
-    it "returns true if the left-hand sides are equal and the right-hand sides
-        are equal too" do
+  describe 'when checking if two Productions are equal' do
+    it 'returns true if the left-hand sides are equal and the right-hand sides
+        are equal too' do
       (@p1 == @p2).must_equal(true)
     end
 
@@ -50,15 +50,15 @@ describe Sodascript::Production do
     end
   end
 
-  describe "#to_s" do
-    it "returns the string representation of a production" do
+  describe '#to_s' do
+    it 'returns the string representation of a production' do
       @p1.to_s.must_equal('S -> A B')
       @p6.to_s.must_equal('K -> D')
     end
   end
 
-  describe "when the right-hand side is epsilon" do
-    it "has a right-hand side of size equal to zero" do
+  describe 'when the right-hand side is epsilon' do
+    it 'has a right-hand side of size equal to zero' do
       p = Sodascript::Production.new(:X, '', Sodascript::Grammar::EPSILON)
       p.rhs.size.must_equal(0)
     end
