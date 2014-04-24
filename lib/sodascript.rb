@@ -94,7 +94,7 @@ module Sodascript
       @tokens.each { |token| puts "    #{token}" }
     end
 
-    self.syntactic_analysis
+    @program_ast = self.syntactic_analysis
     SodaLogger.success("Lexical analysis completed successfuly")
     SodaLogger.success("Parsing completed successfuly")
 
