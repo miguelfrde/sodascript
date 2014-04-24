@@ -44,6 +44,8 @@ module Sodascript
 
     grammar_rules.each do |lhs, prods|
       prods.each do |symbols|
+        # symbols[-1] = semantic action for the production
+        action, symbols = symbols[-1], symbols[0..-2]
         symbols.each_with_index do |sym, i|
           if sym == :br
             symbols[i] = Rule.new(sym, /^\n$/)
@@ -51,7 +53,7 @@ module Sodascript
             symbols[i] = Rule.new(sym, @token_rules[sym])
           end
         end
-        @grammar.add_production(lhs, *symbols)
+        @grammar.add_production(lhs, action, *symbols)
       end
     end
 

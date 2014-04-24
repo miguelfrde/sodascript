@@ -14,22 +14,29 @@ module Sodascript
     # Rule's regular expression (Regexp)
     attr_reader :rhs
 
+    # Production's semantic action
+    attr_reader :action
+
     ##
     # Creates a new production.
     # The left hand side must be a symbol and the right hand side must have
     # at least one Symbol (non-terminal) or one Rule (terminal)
 
-    def initialize(lhs, *args)
+    def initialize(lhs, action, *symbols)
       raise ArgumentError, 'You should at least provide one rhs symbol' unless
-        args.size > 0
+        symbols.size > 0
       raise ArgumentError, 'Left-hand side must be a symbol' unless
         lhs.is_a?(Symbol) && lhs != Grammar::EPSILON
-      args.each do |s|
-        raise ArgumentError, 'Right-hand side symbols must be TokenRules or Symbols' unless
+      raise ArgumentError, 'Action must be a String' unless
+        action.is_a?(String)
+      symbol_error = 'Right-hand side symbols must be TokenRules or Symbols'
+      symbols.each do |s|
+        raise ArgumentError, symbol_error unless
           s.is_a?(Rule) || s.is_a?(Symbol)
       end
       @lhs = lhs
-      @rhs = args.map { |s| (s.is_a?(Rule) && s.name) || s }
+      @action = action
+      @rhs = symbols.map { |s| (s.is_a?(Rule) && s.name) || s }
       @rhs.select! { |s| s != Grammar::EPSILON }
     end
 
