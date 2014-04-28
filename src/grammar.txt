@@ -217,7 +217,7 @@ TERM_OP ::= *       ; "*"
 | /                 ; "/"
 | %                 ; "%"
 
-FACTOR ::= FACTOR_OP FACTOR     ; Expression.new(syms[1].variables, syms[0].to_s + syms[1].to_s)
+FACTOR ::= FACTOR_OP FACTOR     ; Expression.create(syms[1], "#{syms[0]}s", nil)
 | POWER                         ; syms[0]
 
 FACTOR_OP ::= +     ; "+"
