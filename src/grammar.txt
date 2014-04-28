@@ -25,8 +25,8 @@ INLINE_BLOCK ::= ASSIGN    ; syms[0]
 | break                    ; LoopControl.new("break")
 | continue                 ; LoopControl.new("continue")
 | RETURN                   ; syms[0]
-| NAME ( FUN_ARGS )        ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]}(#{syms[1]})")
-| NAME ( )                 ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]}()")
+| NAME ( FUN_ARGS )        ; FunctionCall.create(syms[0], syms[2])
+| NAME ( )                 ; FunctionCall.create(syms[0])
 
 PRINT ::= print PRINT_ARGS    ; Print.new(syms[1])
 
@@ -74,11 +74,11 @@ ALL_NAME ::= name { EXPR }    ; Variable.new(syms[0].lexeme, syms[0].lexeme + "{
 | name                        ; Variable.new(syms[0].lexeme, syms[0].lexeme, [])
 
 CALLABLE_NAME ::= NAME    ; syms[0]
-| NAME ( )                ; Variable.new(syms[0].name, "#{syms[0]}()", syms[0].variables)
-| NAME ( FUN_ARGS )       ; Variable.new(syms[0].name, "#{syms[0]}(#{syms[2]})", syms[2].variables)
+| NAME ( )                ; FunctionCall.create(syms[0])
+| NAME ( FUN_ARGS )       ; FunctionCall.create(syms[0], syms[2])
 
-FUN_ARGS ::= EXPR    ; syms[0]
-| EXPR , FUN_ARGS    ; Expression.create(syms[0], ",", syms[2])
+FUN_ARGS ::= EXPR    ; [syms[0]]
+| EXPR , FUN_ARGS    ; [syms[0]] + syms[2]
 
 CONTROL_STRUCT ::= IF_STMT    ; syms[0]
 | WHILE_STMT                  ; syms[0]
@@ -87,7 +87,7 @@ CONTROL_STRUCT ::= IF_STMT    ; syms[0]
 | FOR_STMT                    ; syms[0]
 | CASE_STMT                   ; syms[0]
 
-ASSIGN ::= NAME ASSIGN_OP EXPR              ; Assign.new(syms[0], syms[1], syms[2])
+ASSIGN ::= NAME ASSIGN_OP EXPR               ; Assign.new(syms[0], syms[1], syms[2])
 | NAME ASSIGN_OP EXPR if EXPR else EXPR      ; Assign.new(syms[0], syms[1], syms[2], InlineCondition.new(syms[4], syms[6]))
 
 PRINT_ARGS ::= EXPR     ; syms[0]

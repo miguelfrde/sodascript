@@ -149,11 +149,11 @@
       - :(
       - :FUN_ARGS
       - :)
-      - 'Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]}(#{syms[1]})")'
+      - 'FunctionCall.create(syms[0], syms[2])'
     - - :NAME
       - :(
       - :)
-      - 'Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]}()")'
+      - 'FunctionCall.create(syms[0])'
   :PRINT:
     - - :print
       - :PRINT_ARGS
@@ -251,19 +251,19 @@
     - - :NAME
       - :(
       - :)
-      - 'Variable.new(syms[0].name, "#{syms[0]}()", syms[0].variables)'
+      - 'FunctionCall.create(syms[0])'
     - - :NAME
       - :(
       - :FUN_ARGS
       - :)
-      - 'Variable.new(syms[0].name, "#{syms[0]}(#{syms[2]})", syms[2].variables)'
+      - 'FunctionCall.create(syms[0], syms[2])'
   :FUN_ARGS:
     - - :EXPR
-      - 'syms[0]'
+      - '[syms[0]]'
     - - :EXPR
       - :,
       - :FUN_ARGS
-      - 'Expression.create(syms[0], ",", syms[2])'
+      - '[syms[0]] + syms[2]'
   :CONTROL_STRUCT:
     - - :IF_STMT
       - 'syms[0]'
