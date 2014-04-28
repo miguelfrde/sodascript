@@ -8,6 +8,25 @@ require 'sodascript/slritem'
 require 'sodascript/slrtable'
 require 'sodascript/slrparser'
 require 'sodascript/llparser'
+require 'sodascript/semantic/assign'
+require 'sodascript/semantic/attribute_accessor'
+require 'sodascript/semantic/case'
+require 'sodascript/semantic/class'
+require 'sodascript/semantic/elsif'
+require 'sodascript/semantic/expression'
+require 'sodascript/semantic/for'
+require 'sodascript/semantic/function'
+require 'sodascript/semantic/functioncall'
+require 'sodascript/semantic/if'
+require 'sodascript/semantic/inline_condition'
+require 'sodascript/semantic/print'
+require 'sodascript/semantic/range'
+require 'sodascript/semantic/return'
+require 'sodascript/semantic/loop_control'
+require 'sodascript/semantic/unless'
+require 'sodascript/semantic/variable'
+require 'sodascript/semantic/when'
+require 'sodascript/semantic/while'
 
 ##
 # Main module of gem.
@@ -44,6 +63,8 @@ module Sodascript
 
     grammar_rules.each do |lhs, prods|
       prods.each do |symbols|
+        # symbols[-1] = semantic action for the production
+        action, symbols = symbols[-1], symbols[0..-2]
         symbols.each_with_index do |sym, i|
           if sym == :br
             symbols[i] = Rule.new(sym, /^\n$/)
@@ -51,7 +72,7 @@ module Sodascript
             symbols[i] = Rule.new(sym, @token_rules[sym])
           end
         end
-        @grammar.add_production(lhs, *symbols)
+        @grammar.add_production(lhs, action, *symbols)
       end
     end
 
@@ -74,7 +95,7 @@ module Sodascript
       @tokens.each { |token| puts "    #{token}" }
     end
 
-    self.syntactic_analysis
+    @program_ast = syntactic_analysis
     SodaLogger.success("Lexical analysis completed successfuly")
     SodaLogger.success("Parsing completed successfuly")
 

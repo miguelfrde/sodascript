@@ -30,11 +30,11 @@ module Sodascript
 
     ##
     # Create a new Grammar object with a specified start symbol.
-    
+
     def initialize(start_symbol)
       raise ArgumentError, 'start_symbol must be a symbol' unless
         start_symbol.is_a?(Symbol)
-      @productions = {} # Maps a non-terminal A to all B, s.t. A -> B 
+      @productions = {} # Maps a non-terminal A to all B, s.t. A -> B
       @non_terminals = Set.new([start_symbol])
       @terminals = {} # Maps a terminal name to its rule
       @start_symbol = start_symbol
@@ -46,9 +46,9 @@ module Sodascript
     # Adds a new production to the grammar
     # :args: left-hand side symbol, right-hand side symbols
 
-    def add_production(lhs, *args)
-      (@productions[lhs] ||= []) << Production.new(lhs, *args)
-      args.each do |sym|
+    def add_production(lhs, action, *symbols)
+      (@productions[lhs] ||= []) << Production.new(lhs, action, *symbols)
+      symbols.each do |sym|
         @terminals[sym.name] = sym if sym.is_a?(Rule)
         @non_terminals << sym if sym.is_a?(Symbol) && sym != EPSILON
       end

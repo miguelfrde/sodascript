@@ -15,7 +15,7 @@ module Sodascript
 
     def initialize(grammar)
       @prod_list = grammar.productions.values.flatten
-      grammar.add_production(:Sprime, grammar.start_symbol)
+      grammar.add_production(:Sprime, 'syms[0]', grammar.start_symbol)
       @prod_list = [grammar.productions[:Sprime][0]] + @prod_list
 
       @prod_hash = {}
@@ -42,6 +42,7 @@ module Sodascript
       @tokens = tokens
       @input = @tokens.next
       @stack = [ 0 ]
+      @symbols = [@input]
       success = true
       @line = 1
       while true
@@ -51,11 +52,15 @@ module Sodascript
           if a == SLRTable::SHIFT
             @stack.push(t)
             @input = @tokens.next
+            @symbols.push(@input)
             @line += 1 if @input.rule.name == :br
           elsif a == SLRTable::REDUCE
             production = @prod_list[t]
             @stack.pop(production.cardinality)
             t = @stack[-1]
+            syms = @symbols.pop(production.cardinality + 1)
+            @symbols.push(eval production.action)
+            @symbols.push(syms[-1])
             @stack.push(@table.goto(t, production.lhs))
           elsif a == SLRTable::ACCEPT
             break
@@ -72,6 +77,7 @@ module Sodascript
       end
       SodaLogger.fail('errors were found while parsing',
         !ENV['SODA_DEBUG'].nil?) unless success && !ENV['SODA_SUCCESS_LEXER']
+      @symbols[0]
     end
 
     private
@@ -86,6 +92,7 @@ module Sodascript
           while true
             if !@table.action(state, @input.rule.name).nil?
               @stack.push(state) #push state Ik
+              @symbols.push(non_terminal)
               break
             else
               begin
@@ -100,6 +107,7 @@ module Sodascript
           break
         end
         @stack.pop
+        @symbols.pop
 
         begin
           @input = @tokens.next
