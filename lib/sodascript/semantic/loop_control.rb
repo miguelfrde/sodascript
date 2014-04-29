@@ -9,7 +9,7 @@ module Sodascript
     end
 
     def to_s
-      @type
+      "#{@type};\n"
     end
   end
 end

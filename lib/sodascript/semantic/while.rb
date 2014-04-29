@@ -8,7 +8,7 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      "while (#{@condition}) {\n#{@block}\n}\n"
     end
   end
 end

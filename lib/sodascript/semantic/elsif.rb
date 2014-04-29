@@ -8,7 +8,7 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      "else if (#{@condition}) {\n#{@block}\n}"
     end
   end
 end

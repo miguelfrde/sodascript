@@ -9,7 +9,11 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      cases = @whens.map(&:to_s).join("\n")
+      str = "switch #{@var} {\n"
+      str << "#{cases}"
+      str << "default:\n#{@default_block}\n}\n"
+      str
     end
   end
 end

@@ -7,7 +7,7 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      "return #{@expression};"
     end
   end
 end

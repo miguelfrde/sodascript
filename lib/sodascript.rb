@@ -10,6 +10,7 @@ require 'sodascript/slrparser'
 require 'sodascript/llparser'
 require 'sodascript/semantic/assign'
 require 'sodascript/semantic/attribute_accessor'
+require 'sodascript/semantic/block'
 require 'sodascript/semantic/case'
 require 'sodascript/semantic/class'
 require 'sodascript/semantic/elsif'
@@ -49,6 +50,7 @@ module Sodascript
     @grammar_file = ENV['GRAMMAR_FILE'] || DEFAULT_RULES_FILE
     self.load_grammar
     self.compile
+    SodaLogger.success("Compilation completed!")
   end
 
   ##
@@ -101,9 +103,8 @@ module Sodascript
 
     # TODO: Semantic analysis
 
-    # TODO: Optimization
-
-    # TODO: Code generation
+    self.generate_code
+    SodaLogger.success("Code generation completed successfuly")
   end
 
   ##
@@ -123,5 +124,15 @@ module Sodascript
   def self.syntactic_analysis
     @parser = ENV['LLPARSE'] && LLParser.new(@grammar) || SLRParser.new(@grammar)
     @parser.parse(@tokens)
+  end
+
+  ##
+  # Generate JavaScript code
+
+  def self.generate_code
+    open(@js_file, "w") do |file|
+      # TODO: write functions from stdlib
+      file.write("#{@program_ast}\n")
+    end
   end
 end
