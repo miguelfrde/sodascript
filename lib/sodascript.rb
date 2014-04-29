@@ -50,7 +50,7 @@ module Sodascript
     @grammar_file = ENV['GRAMMAR_FILE'] || DEFAULT_RULES_FILE
     self.load_grammar
     self.compile
-    SodaLogger.success("Compilation completed!")
+    SodaLogger.success('Compilation completed!')
   end
 
   ##
@@ -91,20 +91,20 @@ module Sodascript
   # semantic analysis, optimization and code generation.
 
   def self.compile
-    self.lexical_analysis
+    lexical_analysis
     if ENV['SODA_DEBUG']
       puts "\nLexical analysis completed, tokens found:"
       @tokens.each { |token| puts "    #{token}" }
     end
 
     @program_ast = syntactic_analysis
-    SodaLogger.success("Lexical analysis completed successfuly")
-    SodaLogger.success("Parsing completed successfuly")
+    SodaLogger.success('Lexical analysis completed successfuly')
+    SodaLogger.success('Parsing completed successfuly')
 
     # TODO: Semantic analysis
 
-    self.generate_code
-    SodaLogger.success("Code generation completed successfuly")
+    generate_code
+    SodaLogger.success('Code generation completed successfuly')
   end
 
   ##
@@ -130,7 +130,7 @@ module Sodascript
   # Generate JavaScript code
 
   def self.generate_code
-    open(@js_file, "w") do |file|
+    open(@js_file, 'w') do |file|
       # TODO: write functions from stdlib
       file.write("#{@program_ast}\n")
     end
