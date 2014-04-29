@@ -1,24 +1,24 @@
-PROGRAM ::= epsilon    ; []
+PROGRAM ::= epsilon    ; Block.new([])
 | SUPERPROGRAM         ; syms[0]
 
-SUPERPROGRAM ::= ANYTHING    ; [syms[0]]
-| ANYTHING br SUPERPROGRAM   ; [syms[0]] + syms[2]
+SUPERPROGRAM ::= ANYTHING    ; syms[0]
+| ANYTHING br SUPERPROGRAM   ; Block.new(syms[0].block + syms[2].block)
 
-ANYTHING ::= INLINE_BLOCK    ; syms[0]
-| CLASS                      ; syms[0]
-| CONTROL_STRUCT             ; syms[0]
-| FUNCTION                   ; syms[0]
+ANYTHING ::= INLINE_BLOCK    ; Block.new([syms[0]])
+| CLASS                      ; Block.new([syms[0]])
+| CONTROL_STRUCT             ; Block.new([syms[0]])
+| FUNCTION                   ; Block.new([syms[0]])
 
 BLOCK_SUITE ::= br BLOCK    ; syms[1]
 | BLOCK                     ; syms[0]
 
-BLOCK ::= CONTROL_STRUCT br BLOCK    ; [syms[0]] + syms[2]
-| INLINE_BLOCK br BLOCK              ; [syms[0]] + syms[2]
-| CONTROL_STRUCT br                  ; [syms[0]]
-| INLINE_BLOCK_SUITE                 ; [syms[0]]
+BLOCK ::= CONTROL_STRUCT br BLOCK    ; Block.new([syms[0]] + syms[2].block)
+| INLINE_BLOCK br BLOCK              ; Block.new([syms[0]] + syms[2].block)
+| CONTROL_STRUCT br                  ; Block.new([syms[0]])
+| INLINE_BLOCK_SUITE                 ; Block.new([syms[0]])
 
-INLINE_BLOCK_SUITE ::= INLINE_BLOCK    ; syms[0]
-| INLINE_BLOCK br                      ; syms[0]
+INLINE_BLOCK_SUITE ::= INLINE_BLOCK    ; Block.new([syms[0]])
+| INLINE_BLOCK br                      ; Block.new([syms[0]])
 
 INLINE_BLOCK ::= ASSIGN    ; syms[0]
 | PRINT                    ; syms[0]
@@ -91,7 +91,7 @@ ASSIGN ::= NAME ASSIGN_OP EXPR               ; Assign.new(syms[0], syms[1], syms
 | NAME ASSIGN_OP EXPR if EXPR else EXPR      ; Assign.new(syms[0], syms[1], syms[2], InlineCondition.new(syms[4], syms[6]))
 
 PRINT_ARGS ::= EXPR     ; syms[0]
-| EXPR , PRINT_ARGS     ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0],syms[2]}")
+| EXPR , PRINT_ARGS     ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]},#{syms[2]}")
 
 RANGE ::= RANGE_ITEM '::' RANGE_ITEM        ; Range.new(syms[0], syms[2])
 | RANGE_ITEM '::' RANGE_ITEM , RANGE_ITEM   ; Range.new(syms[0], syms[2], syms[4])
@@ -125,7 +125,7 @@ ATTR_ACCESSORS ::= ATTRIBUTE_ACCESSOR ACCESSOR_CONTENT      ; AttributeAccessor.
 ACCESSOR_CONTENT ::= name   ; [syms[0].lexeme]
 | name , ACCESSOR_CONTENT   ; [syms[0].lexeme] + syms[2]
 
-IF_STMT ::= if EXPR do BLOCK_SUITE ELSIFS ELSE     ; If.new(syms[1], syms[3], syms[4], syms[5])
+IF_STMT ::= if EXPR do BLOCK_SUITE ELSIFS ELSE     ; If.new(syms[1], syms[3], Block.new(syms[4]), syms[5])
 
 ELSIFS ::= elsif EXPR do BLOCK_SUITE ELSIFS        ; [Elsif.new(syms[1], syms[3])] + syms[4]
 | epsilon                                          ; []
