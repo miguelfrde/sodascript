@@ -13,7 +13,7 @@ module Sodascript
       str = "if (#{@condition}) {\n"
       str << "#{@if_block}\n}\n"
       str << "#{@elsifs}\n" unless @elsifs.empty?
-      str << "else {\n#{@else_block}\n}\n" unless @else_block.empty?
+      str << "else {\n#{@else_block}\n}" unless @else_block.empty?
       str
     end
   end
