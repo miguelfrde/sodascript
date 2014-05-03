@@ -27,6 +27,7 @@ readable ::= readable
 writable ::= writable
 attribute ::= attribute
 private ::= private
+new ::= new
 string ::= ("[^"]*"|'[^']*')
 dec_num ::= (\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?
 hex_num ::= 0x[0-9a-fA-F]+

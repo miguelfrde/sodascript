@@ -177,6 +177,8 @@ ATOM ::= CALLABLE_NAME      ; syms[0]
 | LIST                      ; syms[0]
 | HASH                      ; syms[0]
 | BOOLEAN_OP                ; Expression.new([], syms[0])
+| new name ( FUN_ARGS )     ; FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []), syms[3], true)
+| new name ( )              ; FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []))
 | null                      ; Expression.new([], "null")
 
 EXPR ::= OR     ; syms[0]

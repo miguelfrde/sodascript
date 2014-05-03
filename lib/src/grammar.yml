@@ -29,6 +29,7 @@
   :writable:    !ruby/regexp   /^writable$/
   :attribute:   !ruby/regexp   /^attribute$/
   :private:     !ruby/regexp   /^private$/
+  :new:         !ruby/regexp   /^new$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
   :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
@@ -518,6 +519,17 @@
       - 'syms[0]'
     - - :BOOLEAN_OP
       - 'Expression.new([], syms[0])'
+    - - :new
+      - :name
+      - :(
+      - :FUN_ARGS
+      - :)
+      - 'FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []), syms[3], true)'
+    - - :new
+      - :name
+      - :(
+      - :)
+      - 'FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []))'
     - - :null
       - 'Expression.new([], "null")'
   :EXPR:
