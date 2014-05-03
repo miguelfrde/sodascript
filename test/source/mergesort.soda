@@ -1,32 +1,36 @@
 function merge(left, right)
-    result = []
-    i = 0
-    j = 0
-    while result.length < left.length + right.length do
-        if left[i] < right[i] do
-            result.push(left[i])
-            i += 1
-        else
-            result.push(right[j])
-            j += 1
-        end
-        if i == left.length or j == right.length do
-            result += []
-            break
-        end
+  result = []
+   i = 0
+   j = 0
+   while i < left.length and j < right.length do
+    if left[i] <= right[j] do
+      result.push(left[i])
+      i += 1
+    else
+      result.push(right[j])
+      j += 1
     end
-    return result
+  end
+  while i < left.length do
+    result.push(left[i])
+    i += 1
+  end
+  while j < right.length do
+    result.push(right[j])
+    j += 1
+  end
+  return result
 end
 
 function mergesort(list)
-    if list.length < 2 do
-        return
-    end
+  if list.length < 2 do
+      return list
+  end
 
-    mid = list.length / 2
-    left = mergesort(list.slice(0, mid))
-    left = mergesort(list.slice(mid, list.length))
-    return merge(left, right)
+  mid = list.length / 2
+  left = mergesort(list.slice(0, mid))
+  right = mergesort(list.slice(mid))
+  return merge(left, right)
 end
 
 x = [1, 0, 4, 3, 99, 1.0]
