@@ -9,7 +9,7 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      "range(#{@start}, #{@end}, #{@step})"
     end
   end
 end

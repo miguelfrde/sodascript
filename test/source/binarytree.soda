@@ -1,30 +1,67 @@
 class Node
-    attribute left, right, value
+  attribute left, right, value
 
-    function init(val)
-        self.value = val
-    end
-
+  function init(val)
+    self.value = val
+  end
 end
 
 class BinaryTree
+  function init(val)
+    self.root  = Node(val)
+  end
 
-    function init(val)
-        self.root  = Node(val)
-    end
+  function insert(val)
+    self.root = _insert(self.root, val)
+  end
 
-    function insert(val)
-        root = _insert(root, val)
+  function _insert(node, val)
+    if node == null do
+        return Node(val)
     end
+    if val < node.value do
+        node.left = _insert(node.left, val)
+    else
+        node.right = _insert(node.right, val)
+    end
+    return node
+  end
 
-    function _insert(node, val)
-        node = Node(val) if node == null else node
-        if val < node.value do
-            node.left = _insert(node.left, val)
-        else
-            node.right = _insert(node.right, val)
-        end
-        return node
+  function find(val)
+    return _find(self.root, val)
+  end
+
+  function _find(node, val)
+    if node == null do
+        return -1
+    elsif val < node.val do
+        return _find(node.left, val)
+    elsif val > node.val do
+        return _find(node.right, val)
     end
+    return val
+  end
+
+  function show()
+    _show(self.root, 0)
+  end
+
+  function _show(node, level)
+    if node == null do
+      return
+    end
+    print '  ' * level + node.value
+    _print(node.left, level + 1)
+    _print(node.right, level + 1)
+  end
 
 end
+
+b = BinaryTree(5)
+b.insert(2)
+b.insert(8)
+b.insert(3)
+b.insert(6)
+b.insert(4)
+print b.find(4)
+b.show()

@@ -10,7 +10,12 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      str = "#{@lhs} #{@assign_op} #{@rhs};"
+      unless @inline_condition.nil?
+        str = "if (#{@inline_condition.condition}) {\n#{str}\n} else {\n"
+        str << "#{@lhs} #{@assign_op} #{@inline_condition.else_expr};\n}"
+      end
+      str
     end
   end
 end

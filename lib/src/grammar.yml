@@ -28,6 +28,7 @@
   :readable:    !ruby/regexp   /^readable$/
   :writable:    !ruby/regexp   /^writable$/
   :attribute:   !ruby/regexp   /^attribute$/
+  :private:     !ruby/regexp   /^private$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
   :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
@@ -89,25 +90,25 @@
 :grammar:
   :PROGRAM:
     - - :epsilon
-      - '[]'
+      - 'Block.new([])'
     - - :SUPERPROGRAM
       - 'syms[0]'
   :SUPERPROGRAM:
     - - :ANYTHING
-      - '[syms[0]]'
+      - 'syms[0]'
     - - :ANYTHING
       - :br
       - :SUPERPROGRAM
-      - '[syms[0]] + syms[2]'
+      - 'Block.new(syms[0].block + syms[2].block)'
   :ANYTHING:
     - - :INLINE_BLOCK
-      - 'syms[0]'
+      - 'Block.new([syms[0]])'
     - - :CLASS
-      - 'syms[0]'
+      - 'Block.new([syms[0]])'
     - - :CONTROL_STRUCT
-      - 'syms[0]'
+      - 'Block.new([syms[0]])'
     - - :FUNCTION
-      - 'syms[0]'
+      - 'Block.new([syms[0]])'
   :BLOCK_SUITE:
     - - :br
       - :BLOCK
@@ -118,22 +119,22 @@
     - - :CONTROL_STRUCT
       - :br
       - :BLOCK
-      - '[syms[0]] + syms[2]'
+      - 'Block.new([syms[0]] + syms[2].block)'
     - - :INLINE_BLOCK
       - :br
       - :BLOCK
-      - '[syms[0]] + syms[2]'
+      - 'Block.new([syms[0]] + syms[2].block)'
     - - :CONTROL_STRUCT
       - :br
-      - '[syms[0]]'
+      - 'Block.new([syms[0]])'
     - - :INLINE_BLOCK_SUITE
-      - '[syms[0]]'
+      - 'Block.new([syms[0]])'
   :INLINE_BLOCK_SUITE:
     - - :INLINE_BLOCK
-      - 'syms[0]'
+      - 'Block.new([syms[0]])'
     - - :INLINE_BLOCK
       - :br
-      - 'syms[0]'
+      - 'Block.new([syms[0]])'
   :INLINE_BLOCK:
     - - :ASSIGN
       - 'syms[0]'
@@ -225,6 +226,8 @@
       - '"writable"'
     - - :attribute
       - '"attribute"'
+    - - :private
+      - '"private"'
   :NAME:
     - - :ALL_NAME
       - 'syms[0]'
@@ -296,7 +299,7 @@
     - - :EXPR
       - :,
       - :PRINT_ARGS
-      - 'Expression.new(syms[0].variables + syms[2].variables, "#{syms[0],syms[2]}")'
+      - 'Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]},#{syms[2]}")'
   :RANGE:
     - - :RANGE_ITEM
       - :'::'
@@ -381,7 +384,7 @@
       - :BLOCK_SUITE
       - :ELSIFS
       - :ELSE
-      - 'If.new(syms[1], syms[3], syms[4], syms[5])'
+      - 'If.new(syms[1], syms[3], Block.new(syms[4]), syms[5])'
   :ELSIFS:
     - - :elsif
       - :EXPR

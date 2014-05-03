@@ -8,7 +8,7 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      "case #{@expression} {\n#{block}\nbreak;\n}\n"
     end
   end
 end

@@ -9,7 +9,7 @@ module Sodascript
     end
 
     def to_s
-      # TODO: Javascript code
+      "var #{name} = function(#{@parameters.join(', ')}) {\n#{block}\n};"
     end
   end
 end
