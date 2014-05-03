@@ -65,6 +65,7 @@ BOOLEAN_OP ::= true    ; "true"
 ATTRIBUTE_ACCESSOR ::= readable    ; "readable"
 | writable                         ; "writable"
 | attribute                        ; "attribute"
+| private                          ; "private"
 
 NAME ::= ALL_NAME    ; syms[0]
 | ALL_NAME . NAME    ; Variable.new(syms[0].name, "#{syms[0]}.#{syms[2]}", syms[0].variables)

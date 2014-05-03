@@ -28,6 +28,7 @@
   :readable:    !ruby/regexp   /^readable$/
   :writable:    !ruby/regexp   /^writable$/
   :attribute:   !ruby/regexp   /^attribute$/
+  :private:     !ruby/regexp   /^private$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
   :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
@@ -225,6 +226,8 @@
       - '"writable"'
     - - :attribute
       - '"attribute"'
+    - - :private
+      - '"private"'
   :NAME:
     - - :ALL_NAME
       - 'syms[0]'
