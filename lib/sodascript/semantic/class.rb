@@ -16,25 +16,27 @@ module Sodascript
     end
 
     def to_s
-      str = "function #{name}(#{@constructor.parameters.join(', ')}) {\n"
-      str << "#{@attributes.map(&:to_s).join("\n")}\n" unless @attributes.empty?
-      str << "var self = this;\n"
-      unless @private_methods.empty?
-        str << "\n"
-        str << "#{@private_methods.map(&:to_s).join("\n\n")}\n"
+      str = Indentation.get
+      str << "function #{name}(#{@constructor.parameters.join(', ')}) {\n"
+      Indentation.indent do
+        str << "#{@attributes.map(&:to_s).join("\n")}\n" unless @attributes.empty?
+        str << "#{Indentation.get}var self = this;\n"
+        unless @private_methods.empty?
+          str << "\n#{@private_methods.map(&:to_s).join("\n\n")}\n"
+        end
+        unless @public_methods.empty?
+          str << "\n"
+          str << @public_methods.map { |m| function_to_method(m) }.join("\n")
+        end
+        str << "\n#{@constructor.block}\n" unless @constructor.block.empty?
       end
-      unless @public_methods.empty?
-        str << "\n"
-        str << @public_methods.map { |m| function_to_method(m) }.join("\n")
-      end
-      str << "\n#{@constructor.block}\n" unless @constructor.block.empty?
-      "#{str}}\n"
+      "#{str}#{Indentation.get}}\n"
     end
 
     private
 
     def function_to_method(method)
-      "this.#{method.to_s[4..-1]}\n"
+      "#{Indentation.get}this.#{method.to_s[4 + Indentation.size..-1]}\n"
     end
   end
 end

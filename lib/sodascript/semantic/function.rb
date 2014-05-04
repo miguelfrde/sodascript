@@ -9,7 +9,10 @@ module Sodascript
     end
 
     def to_s
-      "var #{name} = function(#{@parameters.join(', ')}) {\n#{block}\n};"
+      str = Indentation.get
+      str << "var #{name} = function(#{@parameters.join(', ')}) {\n"
+      Indentation.indent { str << "#{block}\n" }
+      str << "#{Indentation.get}};\n"
     end
   end
 end

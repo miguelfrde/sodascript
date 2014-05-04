@@ -10,10 +10,19 @@ module Sodascript
     end
 
     def to_s
-      str = "#{@lhs} #{@assign_op} #{@rhs};"
-      unless @inline_condition.nil?
-        str = "if (#{@inline_condition.condition}) {\n#{str}\n} else {\n"
-        str << "#{@lhs} #{@assign_op} #{@inline_condition.else_expr};\n}"
+      str = Indentation.get
+      true_assign = "#{@lhs} #{@assign_op} #{@rhs};"
+      if @inline_condition.nil?
+        str << "#{true_assign}"
+      else
+        str << "if (#{@inline_condition.condition}) {\n"
+        Indentation.indent { str << "#{Indentation.get}#{true_assign}\n" }
+        str << "#{Indentation.get}} else {\n"
+        Indentation.indent do
+          i = Indentation.get
+          str << "#{i}#{@lhs} #{@assign_op} #{@inline_condition.else_expr};\n"
+        end
+        str << "#{Indentation.get}}"
       end
       str
     end

@@ -8,7 +8,11 @@ module Sodascript
     end
 
     def to_s
-      "else if (#{@condition}) {\n#{@block}\n}"
+      str = "#{Indentation.get}else if (#{@condition}) {\n"
+      Indentation.increment
+      str << "#{@block}\n"
+      Indentation.decrement
+      "#{str}#{Indentation.get}}"
     end
   end
 end

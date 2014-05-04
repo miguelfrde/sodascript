@@ -28,6 +28,7 @@ require 'sodascript/semantic/unless'
 require 'sodascript/semantic/variable'
 require 'sodascript/semantic/when'
 require 'sodascript/semantic/while'
+require 'sodascript/semantic/indentation'
 
 ##
 # Main module of gem.

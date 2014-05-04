@@ -151,11 +151,11 @@
       - :(
       - :FUN_ARGS
       - :)
-      - 'FunctionCall.create(syms[0], syms[2])'
+      - 'FunctionCall.create(syms[0], syms[2], false, true)'
     - - :NAME
       - :(
       - :)
-      - 'FunctionCall.create(syms[0])'
+      - 'FunctionCall.create(syms[0], [], false, true)'
   :PRINT:
     - - :print
       - :PRINT_ARGS

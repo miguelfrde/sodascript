@@ -8,7 +8,9 @@ module Sodascript
     end
 
     def to_s
-      "case #{@expression} {\n#{block}\nbreak;\n}\n"
+      str = "#{Indentation.get}case #{@expression}:\n"
+      Indentation.indent { str << "#{block}\n#{Indentation.get}break;" }
+      str
     end
   end
 end

@@ -9,7 +9,9 @@ module Sodascript
     end
 
     def to_s
-      "#{@iterable}.forEach(function(#{@var}) {\n#{@block}\n});"
+      str = "#{Indentation.get}#{@iterable}.forEach(function(#{@var}) {\n"
+      Indentation.indent { str << "#{@block}\n" }
+      str << "#{Indentation.get}});"
     end
   end
 end

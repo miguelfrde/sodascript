@@ -25,8 +25,8 @@ INLINE_BLOCK ::= ASSIGN    ; syms[0]
 | break                    ; LoopControl.new("break")
 | continue                 ; LoopControl.new("continue")
 | RETURN                   ; syms[0]
-| NAME ( FUN_ARGS )        ; FunctionCall.create(syms[0], syms[2])
-| NAME ( )                 ; FunctionCall.create(syms[0])
+| NAME ( FUN_ARGS )        ; FunctionCall.create(syms[0], syms[2], false, true)
+| NAME ( )                 ; FunctionCall.create(syms[0], [], false, true)
 
 PRINT ::= print PRINT_ARGS    ; Print.new(syms[1])
 
