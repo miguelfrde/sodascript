@@ -8,7 +8,7 @@ end
 
 class BinaryTree
   function init(val)
-    self.root  = Node(val)
+    self.root  = new Node(val)
   end
 
   function insert(val)
@@ -17,7 +17,7 @@ class BinaryTree
 
   function _insert(node, val)
     if node == null do
-        return Node(val)
+        return new Node(val)
     end
     if val < node.value do
         node.left = _insert(node.left, val)
@@ -57,7 +57,7 @@ class BinaryTree
 
 end
 
-b = BinaryTree(5)
+b = new BinaryTree(5)
 b.insert(2)
 b.insert(8)
 b.insert(3)
