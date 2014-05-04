@@ -19,7 +19,8 @@ module Sodascript
       str = Indentation.get
       str << "function #{name}(#{@constructor.parameters.join(', ')}) {\n"
       Indentation.indent do
-        str << "#{@attributes.map(&:to_s).join("\n")}\n" unless @attributes.empty?
+        str << "#{@attributes.map(&:to_s).join("\n")}\n" unless
+          @attributes.empty?
         str << "#{Indentation.get}var self = this;\n"
         unless @private_methods.empty?
           str << "\n#{@private_methods.map(&:to_s).join("\n\n")}\n"
