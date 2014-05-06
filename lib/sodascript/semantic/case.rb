@@ -9,11 +9,12 @@ module Sodascript
     end
 
     def to_s
-      cases = @whens.map(&:to_s).join("\n")
-      str = "switch #{@var} {\n"
-      str << "#{cases}"
-      str << "default:\n#{@default_block}\n}\n"
-      str
+      indent = Indentation.get
+      str = "#{indent}switch (#{@var}) {\n"
+      str << "#{@whens.map(&:to_s).join("\n")}\n"
+      str << "#{indent}default:\n"
+      Indentation.indent { str << "#{@default_block}\n" }
+      "#{str}#{indent}}\n"
     end
   end
 end

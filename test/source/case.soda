@@ -1,0 +1,8 @@
+x = 1
+
+case x
+    when 1 do print x + 1
+    when 2 do print x + 3
+    when 3 do print x + 4
+    default print x
+end

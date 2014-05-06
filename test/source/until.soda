@@ -1,0 +1,6 @@
+x = 100
+
+until x < 0 do
+  print x
+  x -= 1
+end

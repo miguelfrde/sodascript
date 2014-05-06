@@ -7,7 +7,7 @@ module Sodascript
     end
 
     def to_s
-      "return #{@expression};"
+      "#{Indentation.get}return #{@expression};"
     end
   end
 end

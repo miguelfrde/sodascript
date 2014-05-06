@@ -9,7 +9,7 @@ module Sodascript
     end
 
     def to_s
-      "#{@type};\n"
+      "#{Indentation.get}#{@type};\n"
     end
   end
 end

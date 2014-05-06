@@ -9,9 +9,14 @@ module Sodascript
     end
 
     def to_s
-      str = "if (!(#{@condition})) {\n"
-      str << "#{@unless_block}\n}\n"
-      str << "else {\n#{@else_block}\n}\n" unless else_block.empty?
+      indent = Indentation.get
+      str = "#{indent}if (!(#{@condition})) {\n"
+      Indentation.indent { str << "#{@unless_block}\n" }
+      str << "#{indent}}\n"
+      str << "#{indent}else {\n"
+      Indentation.indent do
+        str << "#{@else_block}\n#{indent}}\n" unless else_block.empty?
+      end
       str
     end
   end

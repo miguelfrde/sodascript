@@ -1,0 +1,5 @@
+
+x = 2
+
+result = 'two' if x == 2 else 'none'
+print result

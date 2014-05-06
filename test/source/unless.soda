@@ -1,0 +1,7 @@
+x = 1
+
+unless x > 2 do
+  print 'less than 2'
+else
+  print 'greater than 2'
+end

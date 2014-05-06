@@ -10,25 +10,28 @@ module Sodascript
     end
 
     def to_s
-      @variable_names.map { |name| send("#{@type}_str", "#{name}") }.join("\n")
+      indent = Indentation.get
+      @variable_names.map do |name|
+        send("#{@type}_str", "#{name}", indent)
+      end.join("\n")
     end
 
     private
 
-    def readable_str(name)
-      "var get#{name.capitalize} = function() { return #{name}; };"
+    def readable_str(name, indent)
+      "#{indent}var get#{name.capitalize} = function() { return #{name}; };"
     end
 
-    def writable_str(name)
-      "var set#{name.capitalize} = function(x) { #{name} = x; };"
+    def writable_str(name, indent)
+      "#{indent}var set#{name.capitalize} = function(x) { #{name} = x; };"
     end
 
-    def attribute_str(name)
-      "this.#{name} = null;"
+    def attribute_str(name, indent)
+      "#{indent}this.#{name} = null;"
     end
 
-    def private_str(name)
-      "var #{name} = null;"
+    def private_str(name, indent)
+      "#{indent}var #{name} = null;"
     end
   end
 end
