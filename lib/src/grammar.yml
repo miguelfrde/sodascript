@@ -439,7 +439,7 @@
       - 'While.new(Expression.new(syms[1].variables, "!(#{syms[1]})"), syms[3])'
   :CASE_STMT:
     - - :case
-      - :CALLABLE_NAME
+      - :EXPR
       - :WHENS_SUITE
       - :DEFAULT
       - 'Case.new(syms[1], syms[2], syms[3])'

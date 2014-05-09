@@ -145,7 +145,7 @@ FOR_STMT_AUX ::= RANGE      ; syms[0]
 
 UNTIL_STMT ::= until EXPR do BLOCK_SUITE end    ; While.new(Expression.new(syms[1].variables, "!(#{syms[1]})"), syms[3])
 
-CASE_STMT ::= case CALLABLE_NAME WHENS_SUITE DEFAULT    ; Case.new(syms[1], syms[2], syms[3])
+CASE_STMT ::= case EXPR WHENS_SUITE DEFAULT    ; Case.new(syms[1], syms[2], syms[3])
 
 DEFAULT ::= default BLOCK_SUITE end     ; syms[1]
 | end                                   ; nil
