@@ -30,10 +30,10 @@ INLINE_BLOCK ::= ASSIGN    ; syms[0]
 
 PRINT ::= print PRINT_ARGS    ; Print.new(syms[1])
 
-NUMBER ::= dec_num    ; Expression.new([], syms[0].lexeme)
-| hex_num             ; Expression.new([], syms[0].lexeme)
-| bin_num             ; Expression.new([], syms[0].lexeme)
-| oct_num             ; Expression.new([], syms[0].lexeme)
+NUMBER ::= dec_num    ; Expression.new([], [], syms[0].lexeme)
+| hex_num             ; Expression.new([], [], syms[0].lexeme)
+| bin_num             ; Expression.new([], [], syms[0].lexeme)
+| oct_num             ; Expression.new([], [], syms[0].lexeme)
 
 ASSIGN_OP ::= +=    ; "+="
 | -=                ; "-="
@@ -68,10 +68,10 @@ ATTRIBUTE_ACCESSOR ::= readable    ; "readable"
 | private                          ; "private"
 
 NAME ::= ALL_NAME    ; syms[0]
-| ALL_NAME . NAME    ; Variable.new(syms[0].name, "#{syms[0]}.#{syms[2]}", syms[0].variables)
+| ALL_NAME . NAME    ; Variable.new(syms[0].name, "#{syms[0].string}.#{syms[2].string}", syms[0].variables)
 
-ALL_NAME ::= name { EXPR }    ; Variable.new(syms[0].lexeme, syms[0].lexeme + "{" + syms[2].to_s + "}", syms[2].variables)
-| name [ EXPR ]               ; Variable.new(syms[0].lexeme, syms[0].lexeme + "[" + syms[2].to_s + "]", syms[2].variables)
+ALL_NAME ::= name { EXPR }    ; Variable.new(syms[0].lexeme, syms[0].lexeme + "{" + syms[2].string + "}", syms[2].variables)
+| name [ EXPR ]               ; Variable.new(syms[0].lexeme, syms[0].lexeme + "[" + syms[2].string + "]", syms[2].variables)
 | name                        ; Variable.new(syms[0].lexeme, syms[0].lexeme, [])
 
 CALLABLE_NAME ::= NAME    ; syms[0]
@@ -92,7 +92,7 @@ ASSIGN ::= NAME ASSIGN_OP EXPR               ; Assign.new(syms[0], syms[1], syms
 | NAME ASSIGN_OP EXPR if EXPR else EXPR      ; Assign.new(syms[0], syms[1], syms[2], InlineCondition.new(syms[4], syms[6]))
 
 PRINT_ARGS ::= EXPR     ; syms[0]
-| EXPR , PRINT_ARGS     ; Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]},#{syms[2]}")
+| EXPR , PRINT_ARGS     ; Expression.create(syms[0], ",", syms[2])
 
 RANGE ::= RANGE_ITEM '::' RANGE_ITEM        ; Range.new(syms[0], syms[2])
 | RANGE_ITEM '::' RANGE_ITEM , RANGE_ITEM   ; Range.new(syms[0], syms[2], syms[4])
@@ -143,9 +143,9 @@ FOR_STMT ::= for name in FOR_STMT_AUX do BLOCK_SUITE end    ; For.new(Variable.n
 FOR_STMT_AUX ::= RANGE      ; syms[0]
 | LIST                      ; syms[0]
 
-UNTIL_STMT ::= until EXPR do BLOCK_SUITE end    ; While.new(Expression.new(syms[1].variables, "!(#{syms[1]})"), syms[3])
+UNTIL_STMT ::= until EXPR do BLOCK_SUITE end    ; While.new(Expression.new(syms[1].variables, syms[1].functioncalls, "!(#{syms[1].string})"), syms[3])
 
-CASE_STMT ::= case CALLABLE_NAME WHENS_SUITE DEFAULT    ; Case.new(syms[1], syms[2], syms[3])
+CASE_STMT ::= case EXPR WHENS_SUITE DEFAULT    ; Case.new(syms[1], syms[2], syms[3])
 
 DEFAULT ::= default BLOCK_SUITE end     ; syms[1]
 | end                                   ; nil
@@ -158,28 +158,28 @@ WHENS ::= WHEN_STMT     ; [syms[0]]
 
 WHEN_STMT ::= when EXPR do BLOCK_SUITE      ; When.new(syms[1], syms[3])
 
-LIST ::= [ LIST_ARGS ]      ; Expression.new(syms[1].variables, "[#{syms[1]}]")
-| [ ]                       ; Expression.new([], "[]")
+LIST ::= [ LIST_ARGS ]      ; Expression.new(syms[1].variables, syms[1].functioncalls, "[#{syms[1].string}]")
+| [ ]                       ; Expression.new([], [], "[]")
 
 LIST_ARGS ::= EXPR      ; syms[0]
 | EXPR , LIST_ARGS      ; Expression.create(syms[0], ",", syms[2])
 
-HASH ::= { HASH_ARGS }  ; Expression.new(syms[1].variables, "{" + syms[1].to_s + "}")
-| {  }                  ; Expression.new([], "{}")
+HASH ::= { HASH_ARGS }  ; Expression.new(syms[1].variables, syms[1].functioncalls, "{" + syms[1].string + "}")
+| {  }                  ; Expression.new([], [], "{}")
 
 HASH_ARGS ::= EXPR '::' EXPR    ; Expression.create(syms[0], ":", syms[2])
-| EXPR '::' EXPR , HASH_ARGS    ; Expression.new(syms[0].variables + syms[2].variables + syms[4].variables, "#{syms[0]}: #{syms[2]}, #{syms[4]}")
+| EXPR '::' EXPR , HASH_ARGS    ; Expression.new(syms[0].variables + syms[2].variables + syms[4].variables, syms[0].functioncalls + syms[2].functioncalls + syms[4].functioncalls, "#{syms[0].string}: #{syms[2].string}, #{syms[4].string}")
 
 ATOM ::= CALLABLE_NAME      ; syms[0]
-| string                    ; Expression.new([], syms[0].lexeme)
+| string                    ; Expression.new([], [], syms[0].lexeme)
 | NUMBER                    ; syms[0]
-| ( EXPR )                  ; Expression.new(syms[1].variables, "(#{syms[1]})")
+| ( EXPR )                  ; Expression.new(syms[1].variables, syms[1].functioncalls, "(#{syms[1].string})")
 | LIST                      ; syms[0]
 | HASH                      ; syms[0]
-| BOOLEAN_OP                ; Expression.new([], syms[0])
+| BOOLEAN_OP                ; Expression.new([], [], syms[0])
 | new name ( FUN_ARGS )     ; FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []), syms[3], true)
-| new name ( )              ; FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []))
-| null                      ; Expression.new([], "null")
+| new name ( )              ; FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []), [], true)
+| null                      ; Expression.new([], [], "null")
 
 EXPR ::= OR     ; syms[0]
 
@@ -189,7 +189,7 @@ OR ::= AND      ; syms[0]
 AND ::= NOT     ; syms[0]
 | NOT and AND   ; Expression.create(syms[0], "&&", syms[2])
 
-NOT ::= not NOT     ; Expression.new(syms[1].variables, "~#{syms[1]}")
+NOT ::= not NOT     ; Expression.new(syms[1].variables, syms[1].functioncalls, "~#{syms[1].string}")
 | COMPARISON        ; syms[0]
 
 COMPARISON ::= XOR              ; syms[0]
@@ -227,5 +227,5 @@ FACTOR_OP ::= +     ; "+"
 | -                 ; "-"
 | ~                 ; "~"
 
-POWER ::= ATOM      ; syms[0]
-| ATOM ** FACTOR    ; Expression.create(syms[0], "**", syms[2])
+POWER ::= ATOM      ; Expression.new_with_functioncalls(syms[0])
+| ATOM ** FACTOR    ; Expression.create(Expresion.new(syms[0].variables, syms[0].functioncalls, syms[0].string), "**", syms[2])

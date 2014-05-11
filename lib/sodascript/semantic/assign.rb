@@ -11,7 +11,11 @@ module Sodascript
 
     def to_s
       str = Indentation.get
+
+      perform_semantic_actions(str)
+
       true_assign = "#{@lhs} #{@assign_op} #{@rhs};"
+
       if @inline_condition.nil?
         str << "#{true_assign}"
       else
@@ -25,6 +29,15 @@ module Sodascript
         str << "#{Indentation.get}}"
       end
       str
+    end
+
+    private
+
+    def perform_semantic_actions(str)
+      unless Semantic.is_defined?(@lhs.name) || @lhs.complex? || @lhs.self?
+        str << "var #{@lhs.name};\n#{Indentation.get}"
+        Semantic.define_in_block(@lhs.name)
+      end
     end
   end
 end

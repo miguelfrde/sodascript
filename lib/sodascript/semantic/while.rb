@@ -8,9 +8,11 @@ module Sodascript
     end
 
     def to_s
-      str = "#{Indentation.get}while (#{@condition}) {\n"
-      Indentation.indent { str << "#{@block}\n" }
-      "#{str}#{Indentation.get}}\n"
+      Semantic.check_loop do
+        str = "#{Indentation.get}while (#{@condition}) {\n"
+        Indentation.indent { str << "#{@block}\n" }
+        "#{str}#{Indentation.get}}\n"
+      end
     end
   end
 end

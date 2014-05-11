@@ -1,0 +1,14 @@
+function f(x)
+  print "a"
+end
+
+class MyClass
+  function f(x)
+    print "c"
+  end
+end
+
+c = new MyClass()
+f(1)
+c.f(1)
+

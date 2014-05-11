@@ -20,15 +20,16 @@ require 'sodascript/semantic/function'
 require 'sodascript/semantic/functioncall'
 require 'sodascript/semantic/if'
 require 'sodascript/semantic/inline_condition'
+require 'sodascript/semantic/loop_control'
 require 'sodascript/semantic/print'
 require 'sodascript/semantic/range'
 require 'sodascript/semantic/return'
-require 'sodascript/semantic/loop_control'
 require 'sodascript/semantic/unless'
 require 'sodascript/semantic/variable'
 require 'sodascript/semantic/when'
 require 'sodascript/semantic/while'
 require 'sodascript/semantic/indentation'
+require 'sodascript/semantic/semantic'
 
 ##
 # Main module of gem.
@@ -102,10 +103,17 @@ module Sodascript
     SodaLogger.success('Lexical analysis completed successfuly')
     SodaLogger.success('Parsing completed successfuly')
 
-    # TODO: Semantic analysis
-
-    generate_code
-    SodaLogger.success('Code generation completed successfuly')
+    # Semantic analysis and code generation
+    open(@js_file, 'w') do |file|
+      # TODO: write functions from stdlib
+      file.write("#{@program_ast}\n")
+    end
+    if ENV['SODA_ERROR']
+      File.delete(@js_file)
+      SodaLogger.fail('Semantic errors found!', !ENV['SODA_DEBUG'].nil?)
+      return
+    end
+    SodaLogger.success('Code generation completed successfuly',)
   end
 
   ##
@@ -125,15 +133,5 @@ module Sodascript
   def self.syntactic_analysis
     @parser = ENV['LLPARSE'] && LLParser.new(@grammar) || SLRParser.new(@grammar)
     @parser.parse(@tokens)
-  end
-
-  ##
-  # Generate JavaScript code
-
-  def self.generate_code
-    open(@js_file, 'w') do |file|
-      # TODO: write functions from stdlib
-      file.write("#{@program_ast}\n")
-    end
   end
 end

@@ -9,6 +9,8 @@ module Sodascript
     end
 
     def to_s
+      SodaLogger.error("#{@type} can only be used inside a loop.") unless
+        Semantic.in_loop
       "#{Indentation.get}#{@type};\n"
     end
   end
