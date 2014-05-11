@@ -27,8 +27,9 @@ module Sodascript
 
     def self.indent(&block)
       increment
-      block.call
+      result = block.call
       decrement
+      result
     end
 
     def self.size

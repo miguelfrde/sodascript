@@ -2,7 +2,7 @@ require 'set'
 
 module Sodascript
   class Variable
-    attr_reader :name, :variables
+    attr_reader :name, :variables, :string
 
     def initialize(name, string, variable_list, inline = false)
       @name = name
@@ -13,8 +13,17 @@ module Sodascript
     end
 
     def to_s
-      return "#{Indentation.get}#{@string}" if @inline
+      Semantic.assert_exists(*variables)
+      return "#{Indentation.get}#{@string};" if @inline
       @string
+    end
+
+    def complex?
+      @string.include?('.')
+    end
+
+    def self?
+      @name == 'self'
     end
   end
 end
