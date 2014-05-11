@@ -62,6 +62,7 @@ module SodaLogger
   # Call this method to print a red error
   def self.error(msg)
     self.message("ERROR: #{msg}", RED)
+    ENV['SODA_ERROR'] = '1'
   end
 
   # Call this method to print a red error and exit.
