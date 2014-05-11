@@ -100,8 +100,8 @@ module Sodascript
     end
 
     @program_ast = syntactic_analysis
-    SodaLogger.success('Lexical analysis completed successfuly')
-    SodaLogger.success('Parsing completed successfuly')
+    SodaLogger.success('Lexical analysis completed successfully')
+    SodaLogger.success('Parsing completed successfully')
 
     # Semantic analysis and code generation
     open(@js_file, 'w') do |file|
@@ -113,7 +113,7 @@ module Sodascript
       SodaLogger.fail('Semantic errors found!', !ENV['SODA_DEBUG'].nil?)
       return
     end
-    SodaLogger.success('Code generation completed successfuly',)
+    SodaLogger.success('Code generation completed successfully',)
   end
 
   ##
