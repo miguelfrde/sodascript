@@ -18,7 +18,7 @@ module Sodascript
     end
 
     def self.create(name_var, args = [], new_op = false, inline = false)
-      if name_var.string.include?(".")
+      if name_var.string.include?('.')
         variables = args.inject(Set.new) { |vars, expr| vars + expr.variables }
         string = "#{name_var.string}(#{args.map(&:string).join(', ')})"
         Variable.new(name_var.name, string, variables, inline)

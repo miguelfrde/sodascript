@@ -2,7 +2,6 @@ require 'set'
 
 module Sodascript
   class Semantic
-
     @@variables = Set.new
     @@function_scope = Set.new
     @@class_scope = Set.new
@@ -127,8 +126,6 @@ module Sodascript
       SodaLogger.error(err) if expected != args
       assert_exists(*variables)
     end
-
-    private
 
     def self.save(var)
       SodaLogger.error("Variable '#{var}' already exists in scope.") if

@@ -9,11 +9,11 @@ module Sodascript
 
       methods = block.
         select { |struct| struct.is_a?(Function) }.
-        each { |m| m.is_method }
+        each { |m| m.use_as_method }
 
       @constructor = methods.select { |m| m.name == 'init' }[0]
       @constructor = Function.new('init', [], nil) if @constructor.nil?
-      @constructor.is_method
+      @constructor.use_as_method
       @parameters = @constructor.parameters.map { |param| param_namer(param) }
 
       @private_methods = methods.select do |m|

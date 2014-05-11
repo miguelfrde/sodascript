@@ -9,7 +9,7 @@ module Sodascript
       @method = false
     end
 
-    def is_method
+    def use_as_method
       @method = true
     end
 
