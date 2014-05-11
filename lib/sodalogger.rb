@@ -54,28 +54,44 @@ module SodaLogger
   # White color constant
   WHITE = 47
 
+  # Default level
+  DEFAULT_LEVEL =  0
+
+  # Warning level
+  WARNING_LEVEL = 1
+
+  # Error level
+  ERROR_LEVEL = 2
+
+  # Failure level
+  FAIL_LEVEL = 3
+
+  @level = DEFAULT_LEVEL
+
   # Call this method to print a yellow warning
   def self.warning(msg)
-    self.message("WARNING: #{msg}", YELLOW)
+    return if @level > WARNING_LEVEL
+    message("WARNING: #{msg}", YELLOW)
   end
 
   # Call this method to print a red error
   def self.error(msg)
-    self.message("ERROR: #{msg}", RED)
+    return if @level > ERROR_LEVEL
+    message("ERROR: #{msg}", RED)
     ENV['SODA_ERROR'] = '1'
   end
 
   # Call this method to print a red error and exit.
   # Unlike self.error, the message is written to stderr, instead of stdout.
   def self.fail(msg, print_backtrace = true)
-    self.message("\033[4mFAILURE:\033[0m\e[0;31m #{msg}", RED, $stderr)
-    self.backtrace if print_backtrace
+    message("\033[4mFAILURE:\033[0m\e[0;31m #{msg}", RED, $stderr)
+    backtrace if print_backtrace
     exit(1)
   end
 
   # Call this method to print a green success message
   def self.success(msg)
-    self.message("SUCCESS: #{msg}", GREEN)
+    message("SUCCESS: #{msg}", GREEN)
   end
 
   # Call this method to print a backtrace of the program anytime.
@@ -84,6 +100,14 @@ module SodaLogger
     out = (stdout && $stdout) || $stderr
     out.puts "Backtrace:"
     out.puts caller
+  end
+
+  # Call this method to set the minimum level of error that will be showed
+  # 0 = All, 1 = Warning, 2 = Error, 3 = Failure.
+  def self.level=(level)
+    raise ArgumentError, 'Level must be between 0 and 3 inclusive.' if
+      level < 0 || level > 3
+    @level = level
   end
 
   # Call this method to print with a specified color or just a simple message
