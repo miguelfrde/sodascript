@@ -162,13 +162,13 @@
       - 'Print.new(syms[1])'
   :NUMBER:
     - - :dec_num
-      - 'Expression.new([], syms[0].lexeme)'
+      - 'Expression.new([], [], syms[0].lexeme)'
     - - :hex_num
-      - 'Expression.new([], syms[0].lexeme)'
+      - 'Expression.new([], [], syms[0].lexeme)'
     - - :bin_num
-      - 'Expression.new([], syms[0].lexeme)'
+      - 'Expression.new([], [], syms[0].lexeme)'
     - - :oct_num
-      - 'Expression.new([], syms[0].lexeme)'
+      - 'Expression.new([], [], syms[0].lexeme)'
   :ASSIGN_OP:
     - - :+=
       - '"+="'
@@ -235,18 +235,18 @@
     - - :ALL_NAME
       - :.
       - :NAME
-      - 'Variable.new(syms[0].name, "#{syms[0]}.#{syms[2]}", syms[0].variables)'
+      - 'Variable.new(syms[0].name, "#{syms[0].string}.#{syms[2].string}", syms[0].variables)'
   :ALL_NAME:
     - - :name
       - :{
       - :EXPR
       - :}
-      - 'Variable.new(syms[0].lexeme, syms[0].lexeme + "{" + syms[2].to_s + "}", syms[2].variables)'
+      - 'Variable.new(syms[0].lexeme, syms[0].lexeme + "{" + syms[2].string + "}", syms[2].variables)'
     - - :name
       - :[
       - :EXPR
       - :]
-      - 'Variable.new(syms[0].lexeme, syms[0].lexeme + "[" + syms[2].to_s + "]", syms[2].variables)'
+      - 'Variable.new(syms[0].lexeme, syms[0].lexeme + "[" + syms[2].string + "]", syms[2].variables)'
     - - :name
       - 'Variable.new(syms[0].lexeme, syms[0].lexeme, [])'
   :CALLABLE_NAME:
@@ -300,7 +300,7 @@
     - - :EXPR
       - :,
       - :PRINT_ARGS
-      - 'Expression.new(syms[0].variables + syms[2].variables, "#{syms[0]},#{syms[2]}")'
+      - 'Expression.create(syms[0], ",", syms[2])'
   :RANGE:
     - - :RANGE_ITEM
       - :'::'
@@ -436,7 +436,7 @@
       - :do
       - :BLOCK_SUITE
       - :end
-      - 'While.new(Expression.new(syms[1].variables, "!(#{syms[1]})"), syms[3])'
+      - 'While.new(Expression.new(syms[1].variables, syms[1].functioncalls, "!(#{syms[1].string})"), syms[3])'
   :CASE_STMT:
     - - :case
       - :EXPR
@@ -472,10 +472,10 @@
     - - :[
       - :LIST_ARGS
       - :]
-      - 'Expression.new(syms[1].variables, "[#{syms[1]}]")'
+      - 'Expression.new(syms[1].variables, syms[1].functioncalls, "[#{syms[1].string}]")'
     - - :[
       - :]
-      - 'Expression.new([], "[]")'
+      - 'Expression.new([], [], "[]")'
   :LIST_ARGS:
     - - :EXPR
       - 'syms[0]'
@@ -487,10 +487,10 @@
     - - :{
       - :HASH_ARGS
       - :}
-      - 'Expression.new(syms[1].variables, "{" + syms[1].to_s + "}")'
+      - 'Expression.new(syms[1].variables, syms[1].functioncalls, "{" + syms[1].string + "}")'
     - - :{
       - :}
-      - 'Expression.new([], "{}")'
+      - 'Expression.new([], [], "{}")'
   :HASH_ARGS:
     - - :EXPR
       - :'::'
@@ -501,24 +501,24 @@
       - :EXPR
       - :,
       - :HASH_ARGS
-      - 'Expression.new(syms[0].variables + syms[2].variables + syms[4].variables, "#{syms[0]}: #{syms[2]}, #{syms[4]}")'
+      - 'Expression.new(syms[0].variables + syms[2].variables + syms[4].variables, syms[0].functioncalls + syms[2].functioncalls + syms[4].functioncalls, "#{syms[0].string}: #{syms[2].string}, #{syms[4].string}")'
   :ATOM:
     - - :CALLABLE_NAME
       - 'syms[0]'
     - - :string
-      - 'Expression.new([], syms[0].lexeme)'
+      - 'Expression.new([], [], syms[0].lexeme)'
     - - :NUMBER
       - 'syms[0]'
     - - :(
       - :EXPR
       - :)
-      - 'Expression.new(syms[1].variables, "(#{syms[1]})")'
+      - 'Expression.new(syms[1].variables, syms[1].functioncalls, "(#{syms[1].string})")'
     - - :LIST
       - 'syms[0]'
     - - :HASH
       - 'syms[0]'
     - - :BOOLEAN_OP
-      - 'Expression.new([], syms[0])'
+      - 'Expression.new([], [], syms[0])'
     - - :new
       - :name
       - :(
@@ -531,7 +531,7 @@
       - :)
       - 'FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []))'
     - - :null
-      - 'Expression.new([], "null")'
+      - 'Expression.new([], [], "null")'
   :EXPR:
     - - :OR
       - 'syms[0]'
@@ -552,7 +552,7 @@
   :NOT:
     - - :not
       - :NOT
-      - 'Expression.new(syms[1].variables, "~#{syms[1]}")'
+      - 'Expression.new(syms[1].variables, syms[1].functioncalls, "~#{syms[1].string}")'
     - - :COMPARISON
       - 'syms[0]'
   :COMPARISON:
@@ -629,8 +629,8 @@
       - '"~"'
   :POWER:
     - - :ATOM
-      - 'syms[0]'
+      - 'Expression.new_with_functioncalls(syms[0])'
     - - :ATOM
       - :**
       - :FACTOR
-      - 'Expression.create(syms[0], "**", syms[2])'
+      - 'Expression.create(Expresion.new(syms[0].variables, syms[0].functioncalls, syms[0].string), "**", syms[2])'
