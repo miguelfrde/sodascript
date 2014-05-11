@@ -60,6 +60,11 @@ module Sodascript
     end
 
     def self.check_function(function_name, function_params, &block)
+      if @@functions.include?(function_name)
+        err = "#{function_name} was defined previously. Cannot be defined twice"
+        SodaLogger.error(err)
+        return
+      end
       define_in_block(function_name)
       @@functions[function_name] = function_params.size
       @@is_function = true
@@ -73,6 +78,11 @@ module Sodascript
     end
 
     def self.check_class(myclass, &block)
+      if @@classes.include?(myclass.name)
+        err = "#{myclass.name} was defined previously. Cannot be defined twice"
+        SodaLogger.error(err)
+        return
+      end
       define_in_block(myclass.name)
       @@classes[myclass.name] = myclass.constructor.parameters.size
       @@is_class = true
@@ -81,12 +91,14 @@ module Sodascript
       mapper = Proc.new { |a| a.variable_names.to_a }
       define_in_block(*myclass.attributes.map(&mapper).flatten)
       methods = [myclass.private_methods, myclass.public_methods].flatten
+      SodaLogger.level = SodaLogger::FAIL_LEVEL
       define_in_block(*methods.map(&:name))
+      SodaLogger.level = SodaLogger::DEFAULT_LEVEL
+      previous_functions = @@functions.dup
       methods.each { |m| @@functions[m.name] = m.parameters.size }
       @@functions['init'] = myclass.constructor.parameters.size
       result = block.call
-      methods.each { |m| @@functions.delete(m.name) }
-      @@functions.delete('init')
+      @@functions = previous_functions
       pop_block
       @@is_class = false
       result
@@ -106,7 +118,6 @@ module Sodascript
         fc.is_instantiation
       if @@functions[fc.name].nil?
         SodaLogger.error("Function '#{fc.name}' was called, but not defined.")
-        debug
         return
       end
       expected = @@functions[fc.name]
