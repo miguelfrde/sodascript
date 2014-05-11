@@ -529,7 +529,7 @@
       - :name
       - :(
       - :)
-      - 'FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []))'
+      - 'FunctionCall.create(Variable.new(syms[1].lexeme, syms[1].lexeme, []), [], true)'
     - - :null
       - 'Expression.new([], [], "null")'
   :EXPR:
