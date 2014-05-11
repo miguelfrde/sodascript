@@ -51,8 +51,8 @@ class BinaryTree
       return
     end
     print '  ' * level + node.value
-    _print(node.left, level + 1)
-    _print(node.right, level + 1)
+    _show(node.left, level + 1)
+    _show(node.right, level + 1)
   end
 
 end
