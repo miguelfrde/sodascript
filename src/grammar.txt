@@ -27,6 +27,7 @@ INLINE_BLOCK ::= ASSIGN    ; syms[0]
 | RETURN                   ; syms[0]
 | NAME ( FUN_ARGS )        ; FunctionCall.create(syms[0], syms[2], false, true)
 | NAME ( )                 ; FunctionCall.create(syms[0], [], false, true)
+| INCLUDE                  ; syms[0]
 
 PRINT ::= print PRINT_ARGS    ; Print.new(syms[1])
 
@@ -101,6 +102,8 @@ RANGE_ITEM ::= NUMBER   ; syms[0]
 | CALLABLE_NAME         ; syms[0]
 
 CLASS ::= class name br CLASS_BODY_SUITE end    ; Class.new(syms[1].lexeme, syms[3])
+
+INCLUDE ::= include name     ; Include.new(syms[1].lexeme)
 
 CLASS_BODY_SUITE ::= CLASS_BODY br      ; [syms[0]]
 | CLASS_BODY br CLASS_BODY_SUITE        ; [syms[0]] + syms[2]

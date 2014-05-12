@@ -30,6 +30,7 @@
   :attribute:   !ruby/regexp   /^attribute$/
   :private:     !ruby/regexp   /^private$/
   :new:         !ruby/regexp   /^new$/
+  :include:     !ruby/regexp   /^include$/
   :string:      !ruby/regexp   /^("[^"]*"|'[^']*')$/
   :dec_num:     !ruby/regexp   /^(\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?$/
   :hex_num:     !ruby/regexp   /^0x[0-9a-fA-F]+$/
@@ -156,6 +157,8 @@
       - :(
       - :)
       - 'FunctionCall.create(syms[0], [], false, true)'
+    - - :INCLUDE
+      - 'syms[0]'
   :PRINT:
     - - :print
       - :PRINT_ARGS
@@ -324,6 +327,10 @@
       - :CLASS_BODY_SUITE
       - :end
       - 'Class.new(syms[1].lexeme, syms[3])'
+  :INCLUDE:
+    - - :include
+      - :name
+      - 'Include.new(syms[1].lexeme)'
   :CLASS_BODY_SUITE:
     - - :CLASS_BODY
       - :br
