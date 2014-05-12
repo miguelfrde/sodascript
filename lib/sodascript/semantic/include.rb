@@ -4,11 +4,11 @@ module Sodascript
 
     def initialize(name)
       @name = name
-      @data = File.open("#{Dir.pwd}/"+"#{@name}.js")
+      @data = File.open("#{Dir.pwd}/#{@name}.js")
       @file_not_found = false
-      rescue
-        @file_not_found = true
-      end
+    rescue
+      @file_not_found = true
+    end
 
     def to_s
       if @file_not_found
