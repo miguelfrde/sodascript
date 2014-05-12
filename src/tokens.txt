@@ -28,6 +28,7 @@ writable ::= writable
 attribute ::= attribute
 private ::= private
 new ::= new
+include ::= include
 string ::= ("[^"]*"|'[^']*')
 dec_num ::= (\d+(\.\d*)?|\.\d+)([Ee][+-]?\d+)?
 hex_num ::= 0x[0-9a-fA-F]+

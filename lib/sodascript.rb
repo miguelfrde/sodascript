@@ -30,6 +30,7 @@ require 'sodascript/semantic/when'
 require 'sodascript/semantic/while'
 require 'sodascript/semantic/indentation'
 require 'sodascript/semantic/semantic'
+require 'sodascript/semantic/include'
 
 ##
 # Main module of gem.
