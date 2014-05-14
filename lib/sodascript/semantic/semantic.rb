@@ -1,20 +1,46 @@
 require 'set'
 
 module Sodascript
+
+  ##
+  # Class full of utilities to make semantic analysis simpler. It manages
+  # scopes, class/function/variables definitions, etc.
+
   class Semantic
+
+    # Variables in the main scope
     @@variables = Set.new
+
+    # Variables in the current function definition scope
     @@function_scope = Set.new
+
+    # Varaibles in the current class definition scope
     @@class_scope = Set.new
 
+    # All function names mapped to the number of parameters they have
     @@functions = Hash.new
+
+    # All class names mapped to the number of parameters their constructors have
     @@classes = Hash.new
+
+    # Stack of scopes
     @@stack = []
 
+    # True if inside a class definition
     @@is_class = false
+
+    # True if inside a function NOT a method definition
     @@is_function = false
 
+    # True if inside a loop structure
     @@in_loop = false
+
+    # True if inside a function OR a method definition
     @@in_function = false
+
+    ##
+    # Pushes a new block of variables onto the stack and saves them in the
+    # current scope
 
     def self.push_new_block(*variables)
       variables.each do |var|
@@ -25,6 +51,10 @@ module Sodascript
       @@stack.push(variables)
     end
 
+    ##
+    # Saves all variables in the current scope and appends them to the block on
+    # top of the stack
+
     def self.define_in_block(*variables)
       variables.each do |var|
         fail ArgumentError, 'variable must be a String' unless
@@ -33,6 +63,10 @@ module Sodascript
         @@stack[-1] << var
       end
     end
+
+    ##
+    # Pops a block and removes all the variable names inside it from the current
+    # scope
 
     def self.pop_block
       if @@is_function
@@ -44,6 +78,9 @@ module Sodascript
       end
     end
 
+    ##
+    # True if the name is defined in the current scope
+
     def self.is_defined?(name)
       scope = (@@is_function && @@function_scope) ||
         (@@is_class && @@class_scope) ||
@@ -52,12 +89,21 @@ module Sodascript
         @@functions.include?(name)
     end
 
+    ##
+    # Checks if all the variables are defined in the current scope. Outputs an
+    # error for each variable that is not defined.
+
     def self.assert_exists(*variables)
       variables.each do |variable|
         err = "Variable '#{variable}' is not defined in scope."
         SodaLogger.error(err) unless is_defined?(variable)
       end
     end
+
+    ##
+    # Checks that a function is defined. If it's not, defines it and maps it to
+    # the number of parameters it has. Then evaluates the block. Changes the
+    # scope to function scope.
 
     def self.check_function(function_name, function_params, &block)
       if @@functions.include?(function_name)
@@ -73,9 +119,19 @@ module Sodascript
       result
     end
 
+    ##
+    # Checks if a method exists and  if it doesn't defines it, then evaluates
+    # the given block.
+
     def self.check_method(method_name, method_params, &block)
       function_analysis(method_name, method_params) { block.call }
     end
+
+    ##
+    # Defines a class. Performs semantic analysis and code generation for all
+    # its attributes and methods. If the class is already defined it prints an
+    # error and doesn't check anything inside the class. Changes the scope to
+    # class scope.
 
     def self.check_class(myclass, &block)
       if @@classes.include?(myclass.name)
@@ -104,6 +160,11 @@ module Sodascript
       result
     end
 
+    ##
+    # Sets in_loop to true, then evaluates the given block and finally, sets
+    # in_loop back to its original value (if it set it back to false, then
+    # nested loops won't work)
+
     def self.check_loop(&block)
       prev_loop_status = @@in_loop
       @@in_loop = true
@@ -111,6 +172,13 @@ module Sodascript
       @@in_loop = prev_loop_status
       result
     end
+
+    ##
+    # Perfroms semantic analysis on a function call. Checks that the function
+    # exists, that it's being called with the right number of parameters,
+    # that all the variables in its paramenters exist and that all function
+    # calls in its paramaneters are valid. If the function call is actually a
+    # class instantiation, it calls check_class_instatiation
 
     def self.check_function_call(fc)
       real = fc.arguments.size
@@ -127,6 +195,11 @@ module Sodascript
       fc.functioncalls.each { |f| check_function_call(f) }
     end
 
+    ##
+    # Performs semantic analysis for a class instantiation. Checks that the
+    # class exists, that it's being instantiated with the right number of
+    # parameters and that for each parameter the variables exist.
+
     def self.check_class_instantiation(name, args, variables)
       if @@classes[name].nil?
         SodaLogger.error("Class '#{name}' was instantiated, but not defined.")
@@ -137,6 +210,8 @@ module Sodascript
       SodaLogger.error(err) if expected != args
       assert_exists(*variables)
     end
+
+    ## Saves a variable in the current scope
 
     def self.save(var)
       SodaLogger.error("Variable '#{var}' already exists in scope.") if
@@ -150,6 +225,10 @@ module Sodascript
       end
     end
 
+    ##
+    # Sets in_function to true, evaluates the block and then sets in_function to
+    # back to false.
+
     def self.function_analysis(function_name, function_params, &block)
       @@in_function = true
       push_new_block
@@ -161,13 +240,24 @@ module Sodascript
       result
     end
 
+    ##
+    # in_function accessor
+
     def self.in_function
       @@in_function
     end
 
+    ##
+    # in_loop accessor
+
     def self.in_loop
       @@in_loop
     end
+
+    ##
+    # For debuggin purposes, prints all Sodascript::Semantic attributes and
+    # stops the program execution until <Enter> is hit. It also prints a
+    # backtrace.
 
     def self.debug
       puts caller
