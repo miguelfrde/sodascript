@@ -1,6 +1,21 @@
 module Sodascript
+
+  ##
+  # Function/method representation
+
   class Function
-    attr_reader :name, :parameters, :block
+
+    # Function/method name
+    attr_reader :name
+
+    # List of function/method parameters (strings)
+    attr_reader :parameters
+
+    # Function block
+    attr_reader :block
+
+    ##
+    # Creates a new function/method from a name, parameters and block
 
     def initialize(name, parameters, block)
       @name = name
@@ -9,9 +24,17 @@ module Sodascript
       @method = false
     end
 
+    ##
+    # The function will be a method for now on
+
     def use_as_method
       @method = true
     end
+
+    ##
+    # Perform semantic analysis and code generation for the function/method. For
+    # more information refer to Sodascript::Semantic.check_method and
+    # Sodascript::Semantic.check_function
 
     def to_s
       if @method
@@ -22,6 +45,10 @@ module Sodascript
     end
 
     private
+
+    ##
+    # Code generation for the function. This is executed by Semantic after
+    # setting the function/method scope.
 
     def code
       str = Indentation.get

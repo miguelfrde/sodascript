@@ -1,12 +1,31 @@
 module Sodascript
+
+  ##
+  # For respresentation
+
   class For
-    attr_reader :var, :iterable, :block
+
+    # Variable that will contain the current item from the iterable
+    attr_reader :var
+
+    # Iterable expression.
+    attr_reader :iterable
+
+    # Block to be executed with each item from the iterable.
+    attr_reader :block
+
+    ##
+    # Create a new For given the varaible, the iterable and the block.
 
     def initialize(var, iterable, block)
       @var = var
       @iterable = iterable
       @block = block
     end
+
+    ##
+    # Perform code generation and semantic analysis for the For. For more
+    # information refer to Sodascript::Semantic.check_loop
 
     def to_s
       Semantic.check_loop do

@@ -1,6 +1,26 @@
 module Sodascript
+
+  ##
+  # If representation
+
   class If
-    attr_reader :condition, :if_block, :elsifs, :else_block
+
+    # If condition
+    attr_reader :condition
+
+    # Block to be executed if the condition is true
+    attr_reader :if_block
+
+    # List of elsifs
+    attr_reader :elsifs
+
+    # Block to be executed if the condition is false and none of the elsifs is
+    # executed
+    attr_reader :else_block
+
+    ##
+    # Creates a new if from a given condition, true block, list of elsifs and
+    # false block
 
     def initialize(condition_expr, if_block, elsifs, else_block)
       @condition = condition_expr
@@ -8,6 +28,9 @@ module Sodascript
       @elsifs = elsifs
       @else_block = else_block
     end
+
+    ##
+    # Perform semantic analysis and code generation for the if statement.
 
     def to_s
       indent = Indentation.get

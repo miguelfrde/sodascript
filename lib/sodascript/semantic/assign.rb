@@ -1,6 +1,30 @@
 module Sodascript
+
+  ##
+  # Assign statement. It can be of two types:
+  # lhs op rhs (ex: x = 1 + 2)
+  # lhs op rhs if cond else (ex: x = 1 + 2 if y == 1 else 3)
+
   class Assign
-    attr_reader :lhs, :rhs, :assign_op, :inline_condition
+
+    # Left hand side of the assign statement
+    attr_reader :lhs
+
+    # Right hand side of the assign statement
+    attr_reader :rhs
+
+    # Assign operation
+    attr_reader :assign_op
+
+    # Inline optional condition of the assign statement.
+    # Instance of InlineCondition
+    attr_reader :inline_condition
+
+
+    ##
+    # Create a new Assign object. It receives a lhs (Variable),
+    # a rhs (Expression), an operation (string) and an inline condition
+    # (InlineCondition).
 
     def initialize(expr_lhs, assign_op, expr_rhs, inline_condition = nil)
       @lhs = expr_lhs
@@ -8,6 +32,13 @@ module Sodascript
       @assign_op = assign_op
       @inline_condition = inline_condition
     end
+
+    ##
+    # Preforms semantic analysis and code generation for an assign expression.
+    # Example:
+    # Soda: x = 1 if y == 2 else 3
+    # Javascript:
+    # [var x;] if (y == 2) { x = 1; } else { x = 3; }
 
     def to_s
       str = Indentation.get
@@ -32,6 +63,9 @@ module Sodascript
     end
 
     private
+
+    ##
+    # Checks taht the lhs is defined and if it's not, it defines it.
 
     def perform_semantic_actions(str)
       unless Semantic.is_defined?(@lhs.name) || @lhs.complex? || @lhs.self?

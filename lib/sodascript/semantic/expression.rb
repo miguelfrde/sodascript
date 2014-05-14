@@ -2,8 +2,18 @@ require 'set'
 
 module Sodascript
   class Expression
-    attr_reader :variables, :string, :functioncalls
 
+    # List of variables that the expression contains inside
+    attr_reader :variables
+
+    # String representation of the expression
+    attr_reader :string
+
+    # List of function calls that the expression has inside
+    attr_reader :functioncalls
+
+    # Maps Sodascript operation symbols to our JavaScript standard library
+    # function names. This operations mapped have two operands.
     OP_TO_CODE = {
       '+' => 'add',
       '-' => 'sub',
@@ -18,17 +28,27 @@ module Sodascript
       '|' => 'bitwiseOr'
     }
 
+    # Maps Sodascript operation symbols to our JavaScript standard library
+    # function names. This operations mapped have one operand.
     OP_TO_CODE_SINGLE = {
       '~s' => 'not',
       '-s' => 'negative',
       '+s' => 'positive'
     }
 
+    ##
+    # Create a new expression given a list of variables it contains, a list of
+    # function calls and the string that represents it.
+
     def initialize(variable_list, functioncalls, string)
       @variables = Set.new(variable_list)
       @functioncalls = functioncalls
       @string = string
     end
+
+    ##
+    # Create a new expression given the right operand, the operator and the left
+    # operand.
 
     def self.create(a, op, b)
       func = OP_TO_CODE[op]
@@ -46,6 +66,12 @@ module Sodascript
       end
     end
 
+    ##
+    # This method is used by the grammar to create a new expression given three
+    # kinds of objects: Expression, FunctionCall or anything else (Variable, for
+    # example). If the expression is a function call it adds it creates a new
+    # expression with it
+
     def self.new_with_functioncalls(object)
       str = "#{object.string}"
       if object.is_a?(Expression)
@@ -56,6 +82,11 @@ module Sodascript
         Expression.new(object.variables, [], str)
       end
     end
+
+    ##
+    # Perform semantic analysis and code generation for a expression. It checks
+    # that all variables are defined in the current scope and that the functions
+    # beign called, are called with the right number of parameters.
 
     def to_s
       Semantic.assert_exists(*@variables)
