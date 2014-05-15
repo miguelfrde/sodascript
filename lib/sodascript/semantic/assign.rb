@@ -20,7 +20,6 @@ module Sodascript
     # Instance of InlineCondition
     attr_reader :inline_condition
 
-
     ##
     # Create a new Assign object. It receives a lhs (Variable),
     # a rhs (Expression), an operation (string) and an inline condition
@@ -41,11 +40,12 @@ module Sodascript
     # [var x;] if (y == 2) { x = 1; } else { x = 3; }
 
     def to_s
+      Semantic.assert_exists(@lhs.name)
       str = Indentation.get
 
       perform_semantic_actions(str)
 
-      true_assign = "#{@lhs} #{@assign_op} #{@rhs};"
+      true_assign = "#{assign_code(@lhs, @assign_op, @rhs)}"
 
       if @inline_condition.nil?
         str << "#{true_assign}"
@@ -55,7 +55,8 @@ module Sodascript
         str << "#{Indentation.get}} else {\n"
         Indentation.indent do
           i = Indentation.get
-          str << "#{i}#{@lhs} #{@assign_op} #{@inline_condition.else_expr};\n"
+          code = assign_code(@lhs, @assign_op, @inline_condition.else_expr)
+          str << "#{i}#{code}\n"
         end
         str << "#{Indentation.get}}"
       end
@@ -72,6 +73,12 @@ module Sodascript
         str << "var #{@lhs.name};\n#{Indentation.get}"
         Semantic.define_in_block(@lhs.name)
       end
+    end
+
+    def assign_code(lhs, op, rhs)
+      return "#{lhs} #{op} #{rhs};" if op == '='
+      function = Expression::OP_TO_CODE[op[0..-2]]
+      "#{lhs} = #{function}(#{lhs}, #{rhs});"
     end
   end
 end
