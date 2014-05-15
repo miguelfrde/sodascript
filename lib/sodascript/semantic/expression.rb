@@ -32,7 +32,7 @@ module Sodascript
     # function names. This operations mapped have one operand.
     OP_TO_CODE_SINGLE = {
       '~s' => 'not',
-      '-s' => '-',
+      '-s' => 'negative',
       '+s' => '+'
     }
 
