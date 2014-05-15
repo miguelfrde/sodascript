@@ -40,7 +40,7 @@ module Sodascript
     # [var x;] if (y == 2) { x = 1; } else { x = 3; }
 
     def to_s
-      Semantic.assert_exists(@lhs.name)
+      Semantic.assert_exists(@lhs.name) if @assign_op != '='
       str = Indentation.get
 
       perform_semantic_actions(str)
