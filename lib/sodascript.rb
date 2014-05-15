@@ -106,7 +106,8 @@ module Sodascript
 
     # Semantic analysis and code generation
     open(@js_file, 'w') do |file|
-      # TODO: write functions from stdlib
+      stdlib = File.open('lib/src/stdlib.js')
+      IO.copy_stream(stdlib, file)
       file.write("#{@program_ast}\n")
     end
     if ENV['SODA_ERROR']

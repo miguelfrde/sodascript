@@ -33,7 +33,7 @@ module Sodascript
     OP_TO_CODE_SINGLE = {
       '~s' => 'not',
       '-s' => 'negative',
-      '+s' => 'positive'
+      '+s' => '+'
     }
 
     ##
