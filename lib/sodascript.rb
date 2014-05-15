@@ -108,6 +108,7 @@ module Sodascript
     open(@js_file, 'w') do |file|
       stdlib = File.open('lib/src/stdlib.js')
       IO.copy_stream(stdlib, file)
+      file.write("\n\n")
       file.write("#{@program_ast}\n")
     end
     if ENV['SODA_ERROR']
