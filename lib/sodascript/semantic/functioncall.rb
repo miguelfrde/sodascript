@@ -1,6 +1,10 @@
 require 'set'
 
 module Sodascript
+
+  ##
+  # Function call representation. It can be a class instantiation too.
+
   class FunctionCall
 
     # Name of the function being called
