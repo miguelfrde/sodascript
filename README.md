@@ -1,7 +1,7 @@
 Sodascript
 ==========
 
-A simple and beautiful language that compiles to JavaScript.
+A simple and beautiful language that compiles to JavaScript. Project for a Compilers course.
 
 ![sodascript](https://dl.dropboxusercontent.com/u/17055504/sodascript.png)
 
